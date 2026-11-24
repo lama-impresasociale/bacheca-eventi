@@ -1,0 +1,171 @@
+/* Base comune a tutte le pagine. I colori vengono sovrascritti da config.js. */
+
+:root {
+  --lime: #CED429;
+  --bosco: #074844;
+  --salvia: #EEF1E6;
+  --testo: #1A1A1A;
+  --testo-2: #56625A;
+  --linea: #D5DBD0;
+  --sfondo: #FFFFFF;
+
+  --font: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --sottile: 300;
+  --normale: 400;
+  --medio: 500;
+  --forte: 600;
+
+  color-scheme: light;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  background: var(--sfondo);
+  color: var(--testo);
+  font-family: var(--font);
+  font-weight: var(--sottile);
+  font-size: 17px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, p { margin: 0; }
+h1, h2, h3 { font-weight: var(--sottile); color: var(--bosco); line-height: 1.15; letter-spacing: -0.01em; }
+
+a { color: var(--bosco); text-underline-offset: 3px; text-decoration-thickness: 1px; }
+
+button { font: inherit; color: inherit; }
+
+[hidden] { display: none !important; }
+
+:focus-visible { outline: 2px solid var(--bosco); outline-offset: 3px; }
+
+.visivamente-nascosto {
+  position: absolute !important; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+/* Occhiello: piccola fascia lime sopra i titoli, come le fasce della presentazione. */
+.occhiello::before {
+  content: "";
+  display: block;
+  width: 40px;
+  height: 5px;
+  background: var(--lime);
+  margin-bottom: 18px;
+}
+
+/* Etichetta maiuscola, usata per i titoli delle domande. */
+.etichetta {
+  font-size: 12px;
+  font-weight: var(--forte);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--bosco);
+}
+
+.nota { font-size: 14px; color: var(--testo-2); }
+
+/* Icone a linea fine */
+.icona { width: 20px; height: 20px; flex: none; stroke: currentColor; fill: none; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+
+/* Pulsanti */
+.pulsante {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 48px;
+  padding: 0 22px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--lime);
+  color: var(--bosco);
+  font-weight: var(--medio);
+  font-size: 17px;
+  cursor: pointer;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: opacity .15s, background .15s;
+}
+.pulsante:disabled { background: var(--salvia); color: var(--testo-2); cursor: default; }
+.pulsante:not(:disabled):active { opacity: .8; }
+
+.pulsante-testo {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 48px;
+  padding: 0 4px;
+  border: 0;
+  background: none;
+  color: var(--bosco);
+  font-weight: var(--normale);
+  font-size: 16px;
+  cursor: pointer;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+}
+
+/* Campi a sola linea inferiore */
+.campo {
+  display: block;
+  width: 100%;
+  border: 0;
+  border-bottom: 1px solid var(--linea);
+  border-radius: 0;
+  background: transparent;
+  padding: 10px 0 9px;
+  font: inherit;
+  font-size: 18px;
+  font-weight: var(--sottile);
+  color: var(--testo);
+  -webkit-appearance: none;
+  appearance: none;
+}
+.campo:focus { outline: none; border-bottom: 2px solid var(--bosco); padding-bottom: 8px; }
+.campo::placeholder { color: #9AA59C; }
+textarea.campo { resize: none; line-height: 1.45; min-height: 7.5em; overflow: hidden; }
+select.campo {
+  padding-right: 24px;
+  background-image: linear-gradient(45deg, transparent 50%, var(--bosco) 50%), linear-gradient(135deg, var(--bosco) 50%, transparent 50%);
+  background-position: calc(100% - 10px) 55%, calc(100% - 5px) 55%;
+  background-size: 5px 5px, 5px 5px;
+  background-repeat: no-repeat;
+  cursor: pointer;
+}
+
+.etichetta-campo { display: block; font-size: 13px; font-weight: var(--medio); color: var(--testo-2); letter-spacing: 0.02em; }
+
+/* Scheda di un contributo: solo una linea colorata laterale */
+.scheda {
+  position: relative;
+  padding: 2px 0 2px 16px;
+  border-left: 3px solid var(--c, var(--linea));
+}
+.scheda-testo { white-space: pre-wrap; overflow-wrap: anywhere; }
+.scheda-piede { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; margin-top: 6px; font-size: 14px; color: var(--testo-2); }
+.tag { display: inline-flex; align-items: center; gap: 5px; font-size: 13px; color: var(--bosco); }
+.tag-tema { border-bottom: 1px solid var(--lime); line-height: 1.3; }
+.tag .icona { width: 15px; height: 15px; }
+
+@keyframes arrivo { from { background: var(--salvia); } to { background: transparent; } }
+.scheda.nuova { animation: arrivo 2.5s ease-out; }
+
+/* Avvisi in alto (demo, senza rete) */
+.avviso {
+  font-size: 13px;
+  padding: 8px 16px;
+  background: var(--salvia);
+  color: var(--bosco);
+  text-align: center;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}

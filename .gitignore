@@ -1,0 +1,6 @@
+strumenti/node_modules/
+*.log
+.firebase/
+firebase-debug.log
+firestore-debug.log
+.DS_Store

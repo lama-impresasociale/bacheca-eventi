@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#FFFFFF">
+  <title>{evento}</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23074844'/%3E%3Crect x='8' y='9' width='16' height='4' fill='%23CED429'/%3E%3Crect x='8' y='17' width='11' height='2' fill='%23fff'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/partecipante.css">
+  <script type="module" src="js/partecipante.js"></script>
+</head>
+<body>
+  <div id="avvisi" class="avvisi"></div>
+
+  <!-- 1. Benvenuto -->
+  <section class="schermata" data-schermata="benvenuto" hidden>
+    <div class="contenuto">
+      <h1 class="occhiello titolo-evento" data-config="evento.titolo"></h1>
+      <p class="sottotitolo" data-config="evento.sottotitolo"></p>
+      <p class="spiegazione" data-config="evento.spiegazione"></p>
+
+      <label class="blocco-campo" for="nome">
+        <span class="etichetta-campo" data-t="benvenutoNome"></span>
+        <input id="nome" class="campo" type="text" autocomplete="given-name" autocapitalize="words" enterkeyhint="done">
+        <span class="nota" data-t="benvenutoNomeAiuto"></span>
+      </label>
+
+      <div class="privacy" id="privacy"></div>
+    </div>
+    <div class="barra">
+      <button type="button" class="pulsante-testo" id="salta" data-t="salta"></button>
+      <button type="button" class="pulsante" id="continua"><span data-t="continua"></span></button>
+    </div>
+  </section>
+
+  <!-- 2. Contributo -->
+  <section class="schermata" data-schermata="scrivi" hidden>
+    <header class="testata">
+      <span class="testata-titolo" data-config="evento.titolo"></span>
+      <a href="#bacheca" class="testata-link" data-t="bacheca"></a>
+    </header>
+    <div class="contenuto">
+      <div id="scelta">
+        <h2 class="occhiello titolo-schermata" data-t="sceltaTitolo"></h2>
+        <ul class="opzioni" id="opzioni"></ul>
+      </div>
+
+      <div id="scrittura" hidden>
+        <a href="#scrivi" class="pulsante-testo indietro" id="cambia-domanda"></a>
+        <div class="domanda-scelta" id="domanda-scelta">
+          <span class="etichetta" id="scelta-etichetta"></span>
+          <h2 id="scelta-domanda"></h2>
+        </div>
+        <p class="guida" id="scelta-guida"></p>
+        <label class="area-testo" for="testo">
+          <span class="visivamente-nascosto" data-t="contributo"></span>
+          <textarea id="testo" class="campo" rows="5" enterkeyhint="enter"></textarea>
+        </label>
+        <div class="sotto-campo">
+          <span id="firma"></span>
+          <span id="contatore" class="contatore" aria-live="polite"></span>
+        </div>
+        <p id="errore" class="errore" role="alert" hidden></p>
+      </div>
+    </div>
+    <div class="barra" id="barra-scrivi" hidden>
+      <span></span>
+      <button type="button" class="pulsante" id="invia" disabled><span id="invia-testo"></span></button>
+    </div>
+  </section>
+
+  <!-- 2b. Conferma -->
+  <section class="schermata" data-schermata="inviato" hidden>
+    <div class="contenuto">
+      <div class="segno-ok" aria-hidden="true"></div>
+      <h2 class="titolo-schermata" id="inviato-titolo" tabindex="-1"></h2>
+      <p class="nota attesa" id="inviato-attesa" hidden></p>
+      <div class="anteprima" id="inviato-anteprima"></div>
+    </div>
+    <div class="barra">
+      <button type="button" class="pulsante-testo" id="scrivi-ancora" data-t="scriviAncora"></button>
+      <a class="pulsante" href="#bacheca"><span data-t="vaiBacheca"></span></a>
+    </div>
+  </section>
+
+  <!-- 3. Bacheca -->
+  <section class="schermata" data-schermata="bacheca" hidden>
+    <header class="testata">
+      <span class="testata-titolo" data-config="evento.titolo"></span>
+      <span class="testata-conteggio" id="conteggio-totale"></span>
+    </header>
+    <div class="filtri">
+      <div class="riga-filtri" id="filtri-domande" role="group"></div>
+      <div class="riga-filtri riga-temi" id="filtri-temi" role="group" hidden></div>
+    </div>
+    <div class="contenuto contenuto-bacheca">
+      <p class="conteggio nota" id="conteggio"></p>
+      <div class="lista" id="lista"></div>
+      <p class="vuoto nota" id="vuoto" hidden></p>
+    </div>
+    <a class="pulsante pulsante-fluttuante" href="#scrivi" id="fab"><span data-t="scrivi"></span></a>
+  </section>
+
+  <noscript><p style="padding:24px">Per usare la bacheca serve JavaScript attivo.</p></noscript>
+</body>
+</html>

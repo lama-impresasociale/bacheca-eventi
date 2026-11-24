@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Schermo · {evento}</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23074844'/%3E%3Crect x='8' y='9' width='16' height='4' fill='%23CED429'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/schermo.css">
+  <script type="module" src="js/schermo.js"></script>
+</head>
+<body>
+  <main class="palco">
+    <!-- Accoglienza: titolo e QR grande -->
+    <section class="modo m-accoglienza" data-modo="accoglienza" hidden>
+      <div class="a-testo">
+        <h1 class="occhiello" data-config="evento.titolo"></h1>
+        <p class="a-sotto" data-config="evento.sottotitolo"></p>
+        <p class="a-invito" data-t="schermoInvito"></p>
+      </div>
+      <div class="a-qr">
+        <div class="qr" id="qr-grande"></div>
+        <p class="a-url" id="url-grande"></p>
+      </div>
+    </section>
+
+    <!-- Totale e contributi in evidenza -->
+    <section class="modo m-evidenza" data-modo="evidenza" hidden>
+      <div class="e-totale">
+        <span class="numero" id="e-numero"></span>
+        <span class="e-etichetta" id="e-etichetta"></span>
+      </div>
+      <div class="e-lista" id="e-lista"></div>
+      <p class="e-vuoto" id="e-vuoto" data-t="schermoNessunaEvidenza" hidden></p>
+      <div class="e-pagine" id="e-pagine"></div>
+    </section>
+
+    <!-- Temi di una domanda -->
+    <section class="modo m-temi" data-modo="temi" hidden>
+      <header class="t-testa" id="t-testa">
+        <span class="etichetta" id="t-etichetta"></span>
+        <h2 id="t-domanda"></h2>
+      </header>
+      <ol class="t-barre" id="t-barre"></ol>
+      <p class="t-nota" id="t-nota"></p>
+    </section>
+
+    <footer class="piede">
+      <span class="piede-titolo" data-config="evento.titolo"></span>
+      <div class="angolo-qr" id="angolo-qr">
+        <span data-t="schermoScriviAnche"></span>
+        <div class="qr" id="qr-piccolo"></div>
+      </div>
+    </footer>
+
+    <p class="suggerimento" id="suggerimento" hidden>Premi F o fai doppio clic per il tutto schermo</p>
+  </main>
+</body>
+</html>

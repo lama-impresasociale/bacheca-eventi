@@ -1,0 +1,72 @@
+rules_version = '2';
+
+// Regole per la bacheca degli eventi.
+// Pubblico: può leggere tutto e creare contributi validi, non può modificarli né cancellarli.
+// Regia (pagina regia.html, senza login in questo pilota): può cambiare solo i campi
+// di moderazione (tema, in evidenza, rimosso, fatta) e gestire i temi e lo schermo.
+// Nessuno può cancellare un contributo dall'app: i "rimossi" restano nel database.
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    match /eventi/{evento} {
+
+      match /contributi/{id} {
+        allow read: if true;
+
+        allow create: if contributoNuovoValido(request.resource.data);
+
+        allow update: if request.resource.data.diff(resource.data).affectedKeys()
+                           .hasOnly(['tema', 'evidenza', 'rimosso', 'fatta', 'aggiornato'])
+                      && (request.resource.data.tema == null
+                          || (request.resource.data.tema is string && request.resource.data.tema.size() <= 64))
+                      && request.resource.data.evidenza is bool
+                      && request.resource.data.rimosso is bool
+                      && request.resource.data.fatta is bool
+                      && request.resource.data.aggiornato == request.time;
+
+        allow delete: if false;
+      }
+
+      match /temi/{id} {
+        allow read: if true;
+        allow create: if request.resource.data.keys().hasOnly(['nome', 'domanda', 'creato'])
+                      && request.resource.data.keys().hasAll(['nome', 'domanda'])
+                      && nomeTemaValido(request.resource.data.nome)
+                      && request.resource.data.domanda is string
+                      && request.resource.data.domanda.matches('^[a-z0-9-]{1,40}$');
+        allow update: if request.resource.data.diff(resource.data).affectedKeys().hasOnly(['nome'])
+                      && nomeTemaValido(request.resource.data.nome);
+        allow delete: if true;
+      }
+
+      match /stato/{doc} {
+        allow read: if true;
+        allow write: if doc == 'schermo'
+                     && request.resource.data.keys().hasOnly(['modo', 'domanda', 'aggiornato'])
+                     && request.resource.data.modo in ['accoglienza', 'evidenza', 'temi']
+                     && (request.resource.data.domanda == null
+                         || (request.resource.data.domanda is string && request.resource.data.domanda.size() <= 40));
+      }
+    }
+
+    function contributoNuovoValido(d) {
+      return d.keys().hasOnly(['domanda', 'testo', 'nome', 'origine', 'creato', 'aggiornato', 'tema', 'evidenza', 'rimosso', 'fatta'])
+          && d.keys().hasAll(['domanda', 'testo', 'nome', 'origine', 'creato', 'aggiornato', 'tema', 'evidenza', 'rimosso', 'fatta'])
+          && d.domanda is string && d.domanda.matches('^[a-z0-9-]{1,40}$')
+          && d.testo is string && d.testo.size() >= 1 && d.testo.size() <= 400
+          && d.nome is string && d.nome.size() <= 60
+          && d.origine in ['app', 'post-it']
+          && d.creato == request.time
+          && d.aggiornato == request.time
+          && d.tema == null
+          && d.evidenza == false
+          && d.rimosso == false
+          && d.fatta == false;
+    }
+
+    function nomeTemaValido(n) {
+      return n is string && n.size() >= 1 && n.size() <= 80;
+    }
+  }
+}

@@ -1,0 +1,207 @@
+/* Regia: pensata per un computer. */
+
+body { font-size: 16px; }
+.avvisi { position: sticky; top: 0; z-index: 30; }
+.avviso button { font-size: 13px; min-height: 0; padding: 0 4px; margin-left: 8px; }
+
+.r-testata {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 24px;
+  padding: 22px 32px 14px;
+}
+.r-titolo h1 { font-size: 26px; margin-top: 4px; }
+.r-azioni { display: flex; align-items: center; gap: 22px; flex-wrap: wrap; justify-content: flex-end; }
+.r-azioni .pulsante-testo { min-height: 36px; font-size: 15px; text-decoration: none; }
+.r-azioni .pulsante-testo:hover { text-decoration: underline; }
+
+.r-schede {
+  display: flex;
+  gap: 28px;
+  padding: 0 32px;
+  border-bottom: 1px solid var(--linea);
+  position: sticky;
+  top: 0;
+  background: var(--sfondo);
+  z-index: 20;
+}
+.r-schede button {
+  border: 0;
+  background: none;
+  padding: 12px 0 10px;
+  border-bottom: 2px solid transparent;
+  font-size: 15px;
+  color: var(--testo-2);
+  cursor: pointer;
+}
+.r-schede button[aria-selected="true"] { color: var(--bosco); font-weight: var(--medio); border-bottom-color: var(--lime); }
+
+.r-vista { padding: 24px 32px 80px; }
+
+/* Griglia contributi: filtri | lista | temi */
+.r-griglia { display: grid; grid-template-columns: 220px minmax(0, 1fr) 300px; gap: 40px; align-items: start; }
+.r-filtri, .r-temi { position: sticky; top: 72px; max-height: calc(100vh - 90px); overflow: auto; padding-bottom: 20px; }
+.r-filtri h2.etichetta, .r-temi h2.etichetta { display: block; margin: 0 0 10px; color: var(--testo-2); }
+.r-filtri h2.etichetta:not(:first-child) { margin-top: 28px; }
+
+.f-domande { display: grid; gap: 2px; }
+.f-domanda {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+  padding: 7px 8px 7px 10px;
+  border: 0;
+  border-left: 3px solid var(--c, var(--linea));
+  background: none;
+  text-align: left;
+  font-size: 15px;
+  cursor: pointer;
+  color: var(--testo);
+}
+.f-domanda small { color: var(--testo-2); font-size: 13px; font-variant-numeric: tabular-nums; }
+.f-domanda:hover { background: var(--salvia); }
+.f-domanda[aria-pressed="true"] { background: var(--salvia); color: var(--bosco); font-weight: var(--medio); }
+
+.spunta { display: flex; align-items: center; gap: 9px; font-size: 15px; padding: 5px 0; cursor: pointer; }
+.spunta input { width: 16px; height: 16px; margin: 0; accent-color: var(--bosco); }
+.f-cerca { display: block; margin-top: 14px; }
+.f-cerca .campo { font-size: 15px; }
+
+/* Post-it */
+.r-postit { border-left: 3px solid var(--lime); padding: 4px 0 4px 16px; margin-bottom: 24px; }
+.r-postit summary { cursor: pointer; font-weight: var(--medio); color: var(--bosco); padding: 6px 0; }
+.r-postit form { padding: 8px 0 6px; display: grid; gap: 16px; }
+.postit-domande { border: 0; padding: 0; margin: 0; }
+.postit-domande legend { margin-bottom: 6px; }
+#postit-domande { display: flex; flex-wrap: wrap; gap: 4px 18px; }
+#postit-domande label { display: inline-flex; align-items: center; gap: 7px; font-size: 15px; cursor: pointer; padding: 3px 0; }
+#postit-domande input { accent-color: var(--bosco); }
+#postit-domande .pallino { width: 8px; height: 8px; border-radius: 50%; background: var(--c); }
+.postit-campo textarea { min-height: 4.5em; font-size: 17px; }
+.postit-riga { display: flex; align-items: flex-end; gap: 20px; }
+.postit-nome { flex: 1; max-width: 320px; }
+.postit-riga .nota { flex: 1; }
+
+/* Lista */
+.r-lista-testa { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+.r-lista-testa .spunta { font-size: 14px; color: var(--testo-2); }
+
+.r-selezione {
+  position: sticky;
+  top: 50px;
+  z-index: 15;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 20px;
+  padding: 10px 14px;
+  margin-bottom: 14px;
+  background: var(--salvia);
+  font-size: 15px;
+}
+.r-selezione .pulsante-testo { min-height: 32px; font-size: 15px; }
+.sel-tema { display: inline-flex; align-items: center; gap: 8px; }
+.sel-tema .campo { font-size: 15px; padding: 4px 26px 4px 0; width: auto; max-width: 240px; }
+
+.r-lista { display: grid; gap: 4px; }
+.r-scheda {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr) auto;
+  gap: 4px 12px;
+  align-items: start;
+  padding: 12px 8px 12px 12px;
+  border-left-width: 3px;
+}
+.r-scheda:hover { background: #F8F9F5; }
+.r-scheda.selezionata { background: var(--salvia); }
+.r-scheda .r-sel { padding-top: 3px; }
+.r-scheda .r-sel input { width: 16px; height: 16px; accent-color: var(--bosco); margin: 0; cursor: pointer; }
+.r-scheda .scheda-testo { font-size: 16px; margin-top: 2px; }
+.r-scheda .etichetta { font-size: 11px; }
+.r-scheda.rimossa .r-corpo { opacity: .45; }
+.r-scheda.rimossa .scheda-testo { text-decoration: line-through; text-decoration-thickness: 1px; }
+.r-comandi { display: flex; align-items: center; gap: 4px; }
+.r-comandi .campo { font-size: 14px; padding: 4px 24px 4px 0; width: 190px; }
+.r-icona {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 34px; height: 34px;
+  border: 0; border-radius: 50%;
+  background: none; color: var(--testo-2);
+  cursor: pointer;
+}
+.r-icona:hover { background: var(--salvia); color: var(--bosco); }
+.r-icona[aria-pressed="true"] { color: var(--bosco); }
+.r-icona[aria-pressed="true"] .icona { fill: var(--lime); stroke: var(--bosco); }
+.r-icona.attiva .icona { stroke: var(--bosco); stroke-width: 2; }
+.r-vuoto { margin-top: 20px; }
+
+/* Temi */
+.r-temi .nota { font-size: 14px; }
+.t-domanda { font-size: 15px; color: var(--bosco); margin-bottom: 14px; line-height: 1.35; border-left: 3px solid var(--c); padding-left: 10px; }
+.t-lista { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
+.t-voce { display: grid; grid-template-columns: 20px minmax(0, 1fr) auto auto auto; align-items: center; gap: 4px; }
+.t-voce input[type="checkbox"] { accent-color: var(--bosco); margin: 0; }
+.t-nome {
+  border: 0; background: none; padding: 6px 4px; text-align: left; font-size: 15px; cursor: pointer;
+  color: var(--testo); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.t-nome:hover { color: var(--bosco); text-decoration: underline; text-underline-offset: 3px; }
+.t-voce.attiva .t-nome { color: var(--bosco); font-weight: var(--medio); }
+.t-voce.attiva { background: var(--salvia); }
+.t-conteggio { font-size: 13px; color: var(--testo-2); font-variant-numeric: tabular-nums; padding: 0 4px; }
+.t-voce .r-icona { width: 28px; height: 28px; }
+.t-voce .r-icona .icona { width: 16px; height: 16px; }
+.t-voce .campo { font-size: 15px; padding: 4px 0; }
+.t-conferma { font-size: 13px; color: #8A1F1A; border: 0; background: none; cursor: pointer; text-decoration: underline; padding: 0 4px; }
+.t-nuovo { display: flex; gap: 10px; align-items: flex-end; margin-top: 18px; }
+.t-nuovo .campo { font-size: 15px; }
+.t-nuovo .pulsante, .t-unisci .pulsante { min-height: 38px; padding: 0 16px; font-size: 15px; }
+.t-unisci { margin-top: 18px; padding: 12px; background: var(--salvia); display: grid; gap: 10px; font-size: 14px; }
+.t-unisci .campo { font-size: 15px; }
+
+/* Relatori */
+.r-relatori { max-width: 900px; }
+.r-relatori-testa { display: flex; align-items: baseline; gap: 24px; flex-wrap: wrap; margin-bottom: 24px; }
+.r-relatori-testa h2 { font-size: 26px; }
+.rel-lista { list-style: none; margin: 0; padding: 0; display: grid; gap: 18px; counter-reset: rel; }
+.rel-voce { display: grid; grid-template-columns: 44px minmax(0, 1fr) auto; gap: 16px; align-items: start; border-left: 3px solid var(--c); padding: 6px 0 6px 14px; }
+.rel-numero { font-size: 26px; color: var(--bosco); font-weight: var(--sottile); line-height: 1.1; font-variant-numeric: tabular-nums; }
+.rel-testo { font-size: 21px; line-height: 1.4; white-space: pre-wrap; overflow-wrap: anywhere; }
+.rel-voce .scheda-piede { margin-top: 6px; }
+.rel-voce.fatta .rel-numero, .rel-voce.fatta .rel-testo { opacity: .4; }
+.rel-voce .pulsante { min-height: 40px; font-size: 15px; padding: 0 16px; }
+.rel-voce.fatta .pulsante { background: none; border: 1px solid var(--linea); }
+
+/* Schermo */
+.r-schermo { display: grid; grid-template-columns: minmax(300px, 420px) minmax(0, 1fr); gap: 48px; align-items: start; }
+.r-schermo h2 { font-size: 26px; margin-bottom: 18px; }
+.s-modi { display: grid; gap: 6px; margin-bottom: 18px; }
+.s-modo { display: grid; grid-template-columns: 20px 1fr; gap: 4px 10px; align-items: start; padding: 10px 10px 10px 12px; border-left: 3px solid var(--linea); cursor: pointer; }
+.s-modo input { margin: 4px 0 0; accent-color: var(--bosco); }
+.s-modo strong { font-weight: var(--medio); color: var(--bosco); }
+.s-modo .nota { grid-column: 2; font-size: 14px; }
+.s-modo select { grid-column: 2; margin-top: 4px; font-size: 15px; }
+.s-modo.attivo { border-left-color: var(--lime); background: var(--salvia); }
+#s-apri { margin-top: 16px; }
+.s-titoletto { display: block; margin: 36px 0 10px; color: var(--testo-2); }
+.s-evidenza { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.s-evidenza li { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; align-items: start; border-left: 3px solid var(--c); padding-left: 10px; font-size: 15px; }
+.s-anteprima .etichetta { display: block; color: var(--testo-2); margin-bottom: 8px; }
+.s-cornice { position: relative; width: 100%; aspect-ratio: 16 / 9; border: 1px solid var(--linea); overflow: hidden; }
+.s-cornice iframe { position: absolute; left: 0; top: 0; width: 1600px; height: 900px; border: 0; transform-origin: 0 0; pointer-events: none; }
+
+@media (max-width: 1100px) {
+  .r-griglia { grid-template-columns: 200px minmax(0, 1fr); }
+  .r-temi { grid-column: 1 / -1; position: static; max-height: none; }
+  .r-schermo { grid-template-columns: 1fr; }
+}
+@media (max-width: 720px) {
+  .r-testata { flex-direction: column; align-items: flex-start; padding: 16px; }
+  .r-schede, .r-vista { padding-left: 16px; padding-right: 16px; }
+  .r-griglia { grid-template-columns: 1fr; }
+  .r-filtri { position: static; max-height: none; }
+  .r-scheda { grid-template-columns: 24px minmax(0, 1fr); }
+  .r-comandi { grid-column: 2; }
+}

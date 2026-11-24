@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Regia · {evento}</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23CED429'/%3E%3Crect x='8' y='9' width='16' height='4' fill='%23074844'/%3E%3Crect x='8' y='17' width='11' height='2' fill='%23074844'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/regia.css">
+  <script type="module" src="js/regia.js"></script>
+</head>
+<body>
+  <div id="avvisi" class="avvisi"></div>
+
+  <header class="r-testata">
+    <div class="r-titolo">
+      <span class="etichetta">Regia</span>
+      <h1 data-config="evento.titolo"></h1>
+    </div>
+    <div class="r-azioni">
+      <span class="nota" id="r-conteggi"></span>
+      <a class="pulsante-testo" id="link-pubblico" target="_blank" rel="noopener">Bacheca pubblica</a>
+      <a class="pulsante-testo" id="link-schermo" target="schermo">Apri schermo</a>
+      <button type="button" class="pulsante-testo" id="esporta">Esporta CSV</button>
+    </div>
+  </header>
+
+  <nav class="r-schede" role="tablist" aria-label="Viste della regia">
+    <button type="button" role="tab" data-vista="contributi" aria-selected="true">Contributi</button>
+    <button type="button" role="tab" data-vista="relatori" aria-selected="false">Domande ai relatori <span id="n-relatori"></span></button>
+    <button type="button" role="tab" data-vista="schermo" aria-selected="false">Schermo</button>
+  </nav>
+
+  <main>
+    <!-- Contributi -->
+    <section class="r-vista r-griglia" data-vista="contributi">
+      <aside class="r-filtri">
+        <h2 class="etichetta">Domande</h2>
+        <div id="f-domande" class="f-domande"></div>
+
+        <h2 class="etichetta">Mostra</h2>
+        <label class="spunta"><input type="checkbox" id="f-evidenza"> Solo in evidenza</label>
+        <label class="spunta"><input type="checkbox" id="f-senzatema"> Solo senza tema</label>
+        <label class="spunta"><input type="checkbox" id="f-rimossi"> Anche i rimossi</label>
+        <label class="f-cerca">
+          <span class="visivamente-nascosto">Cerca nel testo</span>
+          <input type="search" id="f-cerca" class="campo" placeholder="Cerca nel testo o nel nome">
+        </label>
+      </aside>
+
+      <div class="r-centro">
+        <details class="r-postit" id="postit">
+          <summary>Aggiungi da post-it</summary>
+          <form id="postit-form" autocomplete="off">
+            <fieldset class="postit-domande">
+              <legend class="etichetta-campo">Domanda</legend>
+              <div id="postit-domande"></div>
+            </fieldset>
+            <label class="postit-campo">
+              <span class="etichetta-campo">Testo del post-it</span>
+              <textarea id="postit-testo" class="campo" rows="3" required></textarea>
+            </label>
+            <div class="postit-riga">
+              <label class="postit-nome">
+                <span class="etichetta-campo">Nome (facoltativo)</span>
+                <input id="postit-nome" class="campo" type="text">
+              </label>
+              <span class="nota" id="postit-esito" role="status"></span>
+              <button type="submit" class="pulsante">Aggiungi</button>
+            </div>
+            <p class="nota">Ctrl + Invio per aggiungere. La domanda resta selezionata per il post-it successivo.</p>
+          </form>
+        </details>
+
+        <div class="r-lista-testa">
+          <label class="spunta"><input type="checkbox" id="sel-tutti"> <span id="r-conteggio"></span></label>
+        </div>
+
+        <div class="r-selezione" id="selezione" hidden>
+          <span id="sel-numero"></span>
+          <span class="sel-tema" id="sel-tema"></span>
+          <button type="button" class="pulsante-testo" id="sel-evidenza">Metti in evidenza</button>
+          <button type="button" class="pulsante-testo" id="sel-noevidenza">Togli evidenza</button>
+          <button type="button" class="pulsante-testo" id="sel-rimuovi">Rimuovi</button>
+          <button type="button" class="pulsante-testo" id="sel-annulla">Annulla selezione</button>
+        </div>
+
+        <div class="r-lista" id="r-lista"></div>
+        <p class="nota r-vuoto" id="r-vuoto" hidden>Nessun contributo con questi filtri.</p>
+      </div>
+
+      <aside class="r-temi" id="r-temi"></aside>
+    </section>
+
+    <!-- Domande ai relatori -->
+    <section class="r-vista r-relatori" data-vista="relatori" hidden>
+      <div class="r-relatori-testa">
+        <h2>Domande ai relatori</h2>
+        <span class="nota" id="rel-conteggi"></span>
+        <label class="spunta"><input type="checkbox" id="rel-nascondi"> Nascondi quelle già poste</label>
+      </div>
+      <ol class="rel-lista" id="rel-lista"></ol>
+      <p class="nota" id="rel-vuoto" hidden>Ancora nessuna domanda ai relatori.</p>
+    </section>
+
+    <!-- Schermo -->
+    <section class="r-vista r-schermo" data-vista="schermo" hidden>
+      <div class="s-comandi">
+        <h2>Cosa mostra lo schermo</h2>
+        <div class="s-modi" id="s-modi" role="radiogroup" aria-label="Modalità dello schermo"></div>
+        <p class="nota">Apri lo schermo nel proiettore con il pulsante qui sotto e mettilo a tutto schermo (tasto F). Da qui cambi cosa mostra.</p>
+        <a class="pulsante" id="s-apri" target="schermo">Apri lo schermo</a>
+
+        <h3 class="etichetta s-titoletto">In evidenza ora</h3>
+        <ul class="s-evidenza" id="s-evidenza"></ul>
+      </div>
+      <div class="s-anteprima">
+        <span class="etichetta">Anteprima</span>
+        <div class="s-cornice"><iframe id="s-iframe" title="Anteprima dello schermo" tabindex="-1"></iframe></div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
