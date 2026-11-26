@@ -4,6 +4,7 @@ import {
 } from './comune.js';
 import qrcode from './vendor/qrcode.js';
 
+window.bachecaAvviata = true; // vedi js/avvio.js
 applicaColori();
 for (const n of document.querySelectorAll('[data-t]')) n.textContent = T[n.dataset.t] ?? '';
 for (const n of document.querySelectorAll('[data-config]')) {

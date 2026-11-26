@@ -77,6 +77,7 @@ regia.html           regia             js/regia.js          css/regia.css
 schermo.html         proiettore        js/schermo.js        css/schermo.css
 css/base.css         stile comune ricavato dalla presentazione ARCO–LAMA
 js/comune.js         utilità comuni
+js/avvio.js          controllo di avvio: se dopo un aggiornamento il browser mescola file vecchi e nuovi, ricarica da solo
 js/store-firebase.js livello dati su Firestore
 js/store-demo.js     livello dati finto (modalità demo) e js/dati-demo.js
 js/vendor/           Firebase e generatore di QR, già pronti (nessuna compilazione necessaria)

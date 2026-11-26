@@ -4,6 +4,7 @@ import {
   piuRecentiPrima, partiScheda, avvisoDemo, seguiRete,
 } from './comune.js';
 
+window.bachecaAvviata = true; // vedi js/avvio.js
 applicaColori();
 const storePronto = apriStore();
 storePronto.catch(e => { console.error(e); avviso(T.erroreCollegamento); });

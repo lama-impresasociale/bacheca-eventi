@@ -4,6 +4,7 @@ import {
   piuRecentiPrima, piuVecchiPrima, partiScheda, inDemo, conParametri, riconcilia, seguiRete,
 } from './comune.js';
 
+window.bachecaAvviata = true; // vedi js/avvio.js
 applicaColori();
 for (const n of document.querySelectorAll('[data-config]')) {
   n.textContent = n.dataset.config.split('.').reduce((o, k) => o?.[k], config) ?? '';
@@ -164,6 +165,9 @@ function disegnaLista() {
   });
   riconcilia($('r-lista'), elementi);
   $('r-vuoto').hidden = l.length > 0;
+  $('r-vuoto').textContent = contributi.length
+    ? 'Nessun contributo con questi filtri.'
+    : 'Ancora nessun contributo: compariranno qui appena il pubblico scrive. Puoi anche aggiungere un post-it qui sopra.';
   $('r-conteggio').textContent = plurale(l.length);
   aggiornaSelezioneSchede();
   disegnaSelezione();
