@@ -10,7 +10,7 @@ Pilota: **Stati Generali di Vallombrosa**, sabato 28 novembre 2026, Reggello.
 | Pagina | Per chi | Cosa fa |
 |---|---|---|
 | `index.html` | pubblico, da telefono | benvenuto con nome facoltativo, scelta della domanda, scrittura (400 caratteri), conferma. Il pubblico non vede la bacheca: la mostra la regia sul proiettore |
-| `regia.html` | regia, da computer | rimozione e ripristino, temi (crea, rinomina, unisci, elimina, assegna anche a più contributi insieme), in evidenza, inserimento dei post-it, domande ai relatori con "fatta", comandi dello schermo, esportazione CSV |
+| `regia.html` | regia, da computer | modifica dei testi delle domande dal vivo, rimozione e ripristino, temi (crea, rinomina, unisci, elimina, assegna anche a più contributi insieme), in evidenza, inserimento dei post-it, domande ai relatori con "fatta", comandi dello schermo, esportazione CSV |
 | `schermo.html` | proiettore | quattro modalità scelte dalla regia: accoglienza con QR grande, bacheca con tutti i contributi dal più recente (anche di una sola domanda), totale e contributi in evidenza, temi di una domanda con i conteggi |
 
 **Modalità demo.** Finché in `config.js` manca la configurazione Firebase, tutte le pagine funzionano con dati finti salvati nel browser.
@@ -18,6 +18,8 @@ Con Firebase configurato, la demo resta disponibile aggiungendo `?demo` all'indi
 Le schede aperte nello stesso browser restano sincronizzate: apri pubblico, regia e schermo in tre schede per provarle insieme.
 
 ## Configurazione: un solo file
+
+I testi delle domande si possono cambiare anche dalla regia (scheda *Testi delle domande*): le modifiche si salvano in Firestore (`eventi/{id evento}/stato/domande`) e valgono subito su telefoni e schermo; `config.js` resta il testo di partenza, ripristinabile con un clic.
 
 Tutto ciò che cambia da un evento all'altro sta in `config.js`: titolo, sottotitolo, spiegazione, informativa, domande (titolo, testo, guida, colore), colori, limiti, testi dell'interfaccia del pubblico e dello schermo, collegamento a Firebase.
 
@@ -87,7 +89,7 @@ firestore.rules      regole di sicurezza da incollare nella console Firebase
 strumenti/           solo per sviluppo: ricostruzione di js/vendor e test delle regole
 ```
 
-Dati in Firestore: `eventi/{id evento}/contributi`, `eventi/{id evento}/temi`, `eventi/{id evento}/stato/schermo`.
+Dati in Firestore: `eventi/{id evento}/contributi`, `eventi/{id evento}/temi`, `eventi/{id evento}/stato/schermo`, `eventi/{id evento}/stato/domande` (testi modificati dalla regia).
 Ogni contributo ha: data e ora (`creato`), nome (può essere vuoto), domanda, testo, tema, in evidenza, rimosso, fatta, origine (`app` o `post-it`).
 
 ## Sviluppo

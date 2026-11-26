@@ -25,6 +25,7 @@ export function creaStoreFirebase(config, { emulatore } = {}) {
   const colContributi = collection(db, 'eventi', idEvento, 'contributi');
   const colTemi = collection(db, 'eventi', idEvento, 'temi');
   const docSchermo = doc(db, 'eventi', idEvento, 'stato', 'schermo');
+  const docTesti = doc(db, 'eventi', idEvento, 'stato', 'domande');
 
   function ascoltaCollezione(col, converti, cb, errore) {
     const mappa = new Map();
@@ -66,6 +67,14 @@ export function creaStoreFirebase(config, { emulatore } = {}) {
     ascoltaTemi: (cb, errore) => ascoltaCollezione(colTemi, tema, cb, errore),
     ascoltaSchermo(cb) {
       return onSnapshot(docSchermo, s => cb(s.exists() ? s.data() : {}), err => console.error(err));
+    },
+
+    /** Testi delle domande modificati dalla regia: { idDomanda: { titolo, breve, domanda, guida } } */
+    ascoltaTestiDomande(cb) {
+      return onSnapshot(docTesti, s => cb(s.exists() ? (s.data().testi || {}) : {}), err => console.error(err));
+    },
+    salvaTestiDomande(testi) {
+      return setDoc(docTesti, { testi, aggiornato: serverTimestamp() });
     },
 
     /** Restituisce una promessa che si risolve quando il server ha ricevuto il contributo. */

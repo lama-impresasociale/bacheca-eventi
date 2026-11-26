@@ -1,6 +1,7 @@
 // Schermo per il proiettore. Cosa mostrare lo decide la regia (documento stato/schermo).
 import {
   config, T, applicaColori, apriStore, domanda, domande, plurale, partiScheda, piuVecchiPrima, indirizzoApp, el, riconcilia,
+  applicaTestiDomande,
 } from './comune.js';
 import qrcode from './vendor/qrcode.js';
 
@@ -31,6 +32,7 @@ const store = await apriStore();
 store.ascoltaContributi(l => { contributi = l.filter(c => !c.rimosso); disegna(); });
 store.ascoltaTemi(l => { temi = l; disegna(); });
 store.ascoltaSchermo(s => { stato = s && s.modo ? s : { modo: 'accoglienza' }; disegna(); });
+store.ascoltaTestiDomande?.(testi => { applicaTestiDomande(testi); nodiBacheca.clear(); firmaPagine = ''; disegna(); });
 
 const palco = document.querySelector('.palco');
 let modoMostrato = null;

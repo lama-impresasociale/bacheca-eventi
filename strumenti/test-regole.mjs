@@ -66,6 +66,9 @@ await prova('schermo: modo valido', 'ammesso', () => setDoc(schermo, { modo: 'te
 await prova('schermo: modo bacheca', 'ammesso', () => setDoc(schermo, { modo: 'bacheca', domanda: null, aggiornato: serverTimestamp() }));
 await prova('schermo: modo vuoto', 'rifiutato', () => setDoc(schermo, { modo: '', domanda: null, aggiornato: serverTimestamp() }));
 await prova('schermo: campo in più', 'rifiutato', () => setDoc(schermo, { modo: 'temi', domanda: null, extra: 1 }));
+await prova('testi domande: salva', 'ammesso', () => setDoc(doc(db, 'eventi', ev, 'stato', 'domande'), { testi: { 'senza-auto': { titolo: 'Senza auto', domanda: 'Nuovo testo?' } }, aggiornato: serverTimestamp() }));
+await prova('testi domande: campo in più', 'rifiutato', () => setDoc(doc(db, 'eventi', ev, 'stato', 'domande'), { testi: {}, altro: 1 }));
+await prova('testi domande: non è una mappa', 'rifiutato', () => setDoc(doc(db, 'eventi', ev, 'stato', 'domande'), { testi: 'ciao' }));
 await prova('altro documento in stato', 'rifiutato', () => setDoc(doc(db, 'eventi', ev, 'stato', 'x'), { modo: 'temi' }));
 await prova('collezione non prevista', 'rifiutato', () => addDoc(collection(db, 'altro'), { a: 1 }));
 

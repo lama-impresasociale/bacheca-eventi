@@ -192,6 +192,23 @@ body { font-size: 16px; }
 .s-cornice { position: relative; width: 100%; aspect-ratio: 16 / 9; border: 1px solid var(--linea); overflow: hidden; }
 .s-cornice iframe { position: absolute; left: 0; top: 0; width: 1600px; height: 900px; border: 0; transform-origin: 0 0; pointer-events: none; }
 
+/* Testi delle domande */
+.r-testi { max-width: 820px; }
+.r-testi h2 { font-size: 26px; }
+.r-testi-nota { margin: 8px 0 26px; font-size: 15px; }
+.r-testi-lista { display: grid; gap: 22px; }
+.td-voce { padding: 18px 20px 18px 26px; background: linear-gradient(to right, var(--c) 0 6px, var(--salvia) 6px); border-radius: 12px; display: grid; gap: 14px; }
+.td-voce .etichetta-campo { margin-bottom: 2px; }
+.td-voce .campo { font-size: 16px; }
+.td-voce textarea.campo { min-height: 2.6em; }
+.td-riga { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: 18px; }
+.td-azioni { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+.td-azioni .pulsante { min-height: 40px; font-size: 15px; padding: 0 18px; }
+.td-azioni .pulsante-testo { min-height: 36px; font-size: 15px; }
+.td-stato { font-size: 14px; color: var(--testo-2); }
+.td-stato.da-salvare { color: var(--bosco); font-weight: var(--forte); }
+.td-modificata { font-size: 12px; color: var(--bosco); font-weight: var(--forte); text-transform: uppercase; letter-spacing: .06em; }
+
 @media (max-width: 1100px) {
   .r-griglia { grid-template-columns: 200px minmax(0, 1fr); }
   .r-temi { grid-column: 1 / -1; position: static; max-height: none; }

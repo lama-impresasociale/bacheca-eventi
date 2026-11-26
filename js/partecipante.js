@@ -2,6 +2,7 @@
 // Il pubblico non vede la bacheca: la mostra la regia proiettandola (schermo.html).
 import {
   config, T, applicaColori, apriStore, el, icona, domande, domanda, partiScheda, avvisoDemo, seguiRete,
+  applicaTestiDomande,
 } from './comune.js';
 
 window.bachecaAvviata = true; // vedi js/avvio.js
@@ -101,16 +102,32 @@ $('salta').addEventListener('click', () => chiudiBenvenuto(false));
 $('nome').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); chiudiBenvenuto(true); } });
 
 // ── 2. Scelta e scrittura ──────────────────────────────────────────────────
-const listaOpzioni = $('opzioni');
-for (const d of domande) {
-  listaOpzioni.append(el('li', {},
+function disegnaOpzioni() {
+  $('opzioni').replaceChildren(...domande.map(d => el('li', {},
     el('a', { class: 'opzione', href: `#scrivi/${encodeURIComponent(d.id)}`, '--c': d.colore },
       el('span', { class: 'etichetta' }, d.titolo),
       el('span', { class: 'opzione-domanda' }, d.domanda),
       icona('avanti'),
     ),
-  ));
+  )));
 }
+disegnaOpzioni();
+
+function disegnaDomandaScelta() {
+  const d = domanda(domandaCorrente);
+  if (!d) return;
+  $('domanda-scelta').style.setProperty('--c', d.colore);
+  $('scelta-etichetta').textContent = d.titolo;
+  $('scelta-domanda').textContent = d.domanda;
+  $('scelta-guida').textContent = d.guida;
+}
+
+// I testi delle domande si possono cambiare dalla regia: si aggiornano anche qui, al volo.
+storePronto.then(store => store.ascoltaTestiDomande?.(testi => {
+  applicaTestiDomande(testi);
+  disegnaOpzioni();
+  disegnaDomandaScelta();
+})).catch(() => {});
 
 const testo = $('testo');
 let domandaCorrente = null;
@@ -128,11 +145,7 @@ function apriScrivi(id) {
     $('link-nome').textContent = nome ? `${nome} · ${T.nomeCambia}` : T.nomeAssente;
     return;
   }
-  const d = domanda(id);
-  $('domanda-scelta').style.setProperty('--c', d.colore);
-  $('scelta-etichetta').textContent = d.titolo;
-  $('scelta-domanda').textContent = d.domanda;
-  $('scelta-guida').textContent = d.guida;
+  disegnaDomandaScelta();
   testo.placeholder = T.contributoSegnaposto || '';
   const b = bozza.leggi();
   testo.value = b.testo || '';

@@ -6,7 +6,7 @@ import { semina, prossimoArrivo, nuovoId } from './dati-demo.js';
 export function creaStoreDemo(config) {
   const chiave = `bacheca-demo:${config.evento.id}`;
   const canale = 'BroadcastChannel' in window ? new BroadcastChannel(chiave) : null;
-  const ascoltatori = { contributi: new Set(), temi: new Set(), schermo: new Set() };
+  const ascoltatori = { contributi: new Set(), temi: new Set(), schermo: new Set(), testi: new Set() };
 
   function leggi() {
     try {
@@ -26,6 +26,7 @@ export function creaStoreDemo(config) {
       for (const cb of ascoltatori.contributi) cb(stato.contributi.map(c => ({ ...c })), { daCache: false });
       for (const cb of ascoltatori.temi) cb(stato.temi.map(t => ({ ...t })), { daCache: false });
       for (const cb of ascoltatori.schermo) cb({ ...stato.schermo });
+      for (const cb of ascoltatori.testi) cb(JSON.parse(JSON.stringify(stato.testiDomande || {})));
     });
   }
   function cambia(fn) {
@@ -56,6 +57,11 @@ export function creaStoreDemo(config) {
     ascoltaContributi: cb => ascolta('contributi', cb),
     ascoltaTemi: cb => ascolta('temi', cb),
     ascoltaSchermo: cb => ascolta('schermo', cb),
+    ascoltaTestiDomande: cb => ascolta('testi', cb),
+
+    async salvaTestiDomande(testi) {
+      cambia(s => { s.testiDomande = JSON.parse(JSON.stringify(testi)); });
+    },
 
     async inviaContributo({ domanda, testo, nome = '', origine = 'app' }) {
       await attesa(350);

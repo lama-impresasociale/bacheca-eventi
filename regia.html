@@ -31,6 +31,7 @@
     <button type="button" role="tab" data-vista="contributi" aria-selected="true">Contributi</button>
     <button type="button" role="tab" data-vista="relatori" aria-selected="false">Domande ai relatori <span id="n-relatori"></span></button>
     <button type="button" role="tab" data-vista="schermo" aria-selected="false">Schermo</button>
+    <button type="button" role="tab" data-vista="testi" aria-selected="false">Testi delle domande</button>
   </nav>
 
   <main>
@@ -120,6 +121,12 @@
         <span class="etichetta">Anteprima</span>
         <div class="s-cornice"><iframe id="s-iframe" title="Anteprima dello schermo" tabindex="-1"></iframe></div>
       </div>
+    </section>
+    <!-- Testi delle domande -->
+    <section class="r-vista r-testi" data-vista="testi" hidden>
+      <h2>Testi delle domande</h2>
+      <p class="nota r-testi-nota">Le modifiche compaiono subito sui telefoni, sullo schermo e qui in regia. I contributi già arrivati restano collegati alla loro domanda.</p>
+      <div class="r-testi-lista" id="r-testi-lista"></div>
     </section>
   </main>
 </body>

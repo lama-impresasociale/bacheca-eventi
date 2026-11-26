@@ -49,6 +49,19 @@ export const domande = config.domande;
 const perId = new Map(domande.map(d => [d.id, d]));
 export const domanda = id => perId.get(id);
 
+// Testi delle domande modificabili dalla regia. config.js resta il testo di partenza:
+// le modifiche salvate in Firestore (stato/domande) lo sostituiscono in tutte le pagine.
+export const CAMPI_TESTO_DOMANDA = ['titolo', 'breve', 'domanda', 'guida'];
+const testiDiPartenza = new Map(domande.map(d => [d.id, Object.fromEntries(CAMPI_TESTO_DOMANDA.map(k => [k, d[k] || '']))]));
+export const testiOriginali = id => ({ ...testiDiPartenza.get(id) });
+export function applicaTestiDomande(testi = {}) {
+  for (const d of domande) {
+    const o = testiDiPartenza.get(d.id);
+    const t = (testi && testi[d.id]) || {};
+    for (const k of CAMPI_TESTO_DOMANDA) d[k] = (typeof t[k] === 'string' && t[k].trim()) ? t[k].trim() : o[k];
+  }
+}
+
 export function plurale(n, sing = T.contributoSingolare, plur = T.contributoPlurale) {
   return `${n} ${n === 1 ? sing : plur}`;
 }

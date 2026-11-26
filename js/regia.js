@@ -1,6 +1,7 @@
 // Regia: moderazione, temi, post-it, domande ai relatori, schermo, esportazione.
 import {
   config, applicaColori, apriStore, el, icona, domande, domanda, plurale, ora, dataOra, eventoDiProva,
+  applicaTestiDomande, testiOriginali, CAMPI_TESTO_DOMANDA,
   piuRecentiPrima, piuVecchiPrima, partiScheda, inDemo, conParametri, riconcilia, seguiRete,
 } from './comune.js';
 
@@ -67,6 +68,15 @@ const domandeRelatori = new Set(domande.filter(d => d.relatori).map(d => d.id));
 store.ascoltaContributi(l => { contributi = l; for (const id of selezione) if (!l.some(c => c.id === id)) selezione.delete(id); ridisegna(); }, () => avviso('Non riesco a leggere i contributi. Controlla le regole di Firestore.'));
 store.ascoltaTemi(l => { temi = l; for (const id of temiSelezionati) if (!l.some(t => t.id === id)) temiSelezionati.delete(id); ridisegna(); });
 store.ascoltaSchermo(s => { statoSchermo = s || {}; if (vista === 'schermo') disegnaSchermo(); });
+let testiSalvati = {};
+store.ascoltaTestiDomande?.(testi => {
+  testiSalvati = testi || {};
+  applicaTestiDomande(testiSalvati);
+  nodi.clear();               // le schede mostrano il titolo della domanda: vanno ridisegnate
+  disegnaPostitDomande();
+  ridisegna();
+  if (vista === 'testi') disegnaTesti();
+});
 
 // ── Schede (viste) ─────────────────────────────────────────────────────────
 for (const b of document.querySelectorAll('[role="tab"]')) {
@@ -90,6 +100,7 @@ function ridisegna() {
   if (vista === 'contributi') { disegnaFiltri(); disegnaLista(); disegnaTemi(); }
   if (vista === 'relatori') disegnaRelatori();
   if (vista === 'schermo') disegnaSchermo();
+  if (vista === 'testi') disegnaTesti();
 }
 
 // ── Filtri ─────────────────────────────────────────────────────────────────
@@ -224,9 +235,12 @@ $('sel-annulla').addEventListener('click', () => { selezione.clear(); aggiornaSe
 
 // ── Post-it ────────────────────────────────────────────────────────────────
 let domandaPostit = domande[0]?.id;
-$('postit-domande').replaceChildren(...domande.map(d => el('label', { '--c': d.colore },
-  el('input', { type: 'radio', name: 'postit-domanda', value: d.id, checked: d.id === domandaPostit, onchange: () => { domandaPostit = d.id; } }),
-  el('span', { class: 'pallino' }), d.breve || d.titolo)));
+function disegnaPostitDomande() {
+  $('postit-domande').replaceChildren(...domande.map(d => el('label', { '--c': d.colore },
+    el('input', { type: 'radio', name: 'postit-domanda', value: d.id, checked: d.id === domandaPostit, onchange: () => { domandaPostit = d.id; } }),
+    el('span', { class: 'pallino' }), d.breve || d.titolo)));
+}
+disegnaPostitDomande();
 $('postit-testo').maxLength = config.limiti.caratteri;
 $('postit-nome').maxLength = config.limiti.caratteriNome;
 $('postit-testo').addEventListener('keydown', e => { if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); $('postit-form').requestSubmit(); } });
@@ -431,6 +445,82 @@ function scalaAnteprima() {
   $('s-iframe').style.transform = `scale(${cornice.clientWidth / 1600})`;
 }
 addEventListener('resize', scalaAnteprima);
+
+// ── Testi delle domande ────────────────────────────────────────────────────
+const limitiTesto = { titolo: 60, breve: 30, domanda: 300, guida: 400 };
+const etichetteCampi = {
+  titolo: 'Etichetta (compare in maiuscolo sopra la domanda)',
+  breve: 'Nome breve (filtri e post-it)',
+  domanda: 'Domanda',
+  guida: 'Testo guida (sotto la domanda, sul telefono)',
+};
+const formTesti = new Map(); // id domanda -> { nodo, campi, stato, modificato }
+
+function valoriAttuali(id) {
+  const d = domanda(id);
+  return Object.fromEntries(CAMPI_TESTO_DOMANDA.map(k => [k, d[k] || '']));
+}
+
+function costruisciFormTesti(d) {
+  const campi = {};
+  const stato = el('span', { class: 'td-stato', role: 'status' });
+  const segno = el('span', { class: 'td-modificata' });
+  const voce = { campi, stato, segno, modificato: false };
+  const segnaModificato = () => { voce.modificato = true; stato.textContent = 'Modifiche non salvate'; stato.classList.add('da-salvare'); };
+  for (const k of CAMPI_TESTO_DOMANDA) {
+    const lungo = k === 'domanda' || k === 'guida';
+    campi[k] = el(lungo ? 'textarea' : 'input', { class: 'campo', maxlength: limitiTesto[k], rows: lungo ? 2 : undefined, type: lungo ? undefined : 'text', oninput: segnaModificato });
+  }
+  const salva = async () => {
+    const nuovi = Object.fromEntries(CAMPI_TESTO_DOMANDA.map(k => [k, campi[k].value.trim()]));
+    if (!nuovi.titolo || !nuovi.domanda) { stato.textContent = 'Etichetta e domanda non possono restare vuote.'; return; }
+    const originale = testiOriginali(d.id);
+    const tutti = JSON.parse(JSON.stringify(testiSalvati));
+    const diversi = CAMPI_TESTO_DOMANDA.some(k => nuovi[k] !== originale[k]);
+    if (diversi) tutti[d.id] = nuovi; else delete tutti[d.id];
+    stato.textContent = 'Salvataggio…';
+    try {
+      await store.salvaTestiDomande(tutti);
+      voce.modificato = false;
+      stato.classList.remove('da-salvare');
+      stato.textContent = 'Salvato';
+      riempi(true);
+    } catch (e) { errore(e); stato.textContent = 'Non salvato'; }
+  };
+  const ripristina = () => {
+    const o = testiOriginali(d.id);
+    for (const k of CAMPI_TESTO_DOMANDA) campi[k].value = o[k];
+    segnaModificato();
+  };
+  function riempi(forza) {
+    if (voce.modificato && !forza) return; // non sovrascrivere ciò che si sta scrivendo
+    const v = valoriAttuali(d.id);
+    for (const k of CAMPI_TESTO_DOMANDA) if (campi[k].value !== v[k]) campi[k].value = v[k];
+    segno.textContent = testiSalvati[d.id] ? 'Testo modificato' : '';
+  }
+  voce.riempi = riempi;
+  const campo = k => el('label', {}, el('span', { class: 'etichetta-campo' }, etichetteCampi[k]), campi[k]);
+  voce.nodo = el('div', { class: 'td-voce', '--c': d.colore },
+    segno,
+    el('div', { class: 'td-riga' }, campo('titolo'), campo('breve')),
+    campo('domanda'),
+    campo('guida'),
+    el('div', { class: 'td-azioni' },
+      el('button', { type: 'button', class: 'pulsante', onclick: salva }, 'Salva'),
+      el('button', { type: 'button', class: 'pulsante-testo', onclick: ripristina }, 'Ripristina il testo originale'),
+      stato,
+    ),
+  );
+  return voce;
+}
+
+function disegnaTesti() {
+  for (const d of domande) {
+    if (!formTesti.has(d.id)) formTesti.set(d.id, costruisciFormTesti(d));
+    formTesti.get(d.id).riempi();
+  }
+  riconcilia($('r-testi-lista'), domande.map(d => formTesti.get(d.id).nodo));
+}
 
 // ── Esportazione CSV ───────────────────────────────────────────────────────
 $('esporta').addEventListener('click', () => {

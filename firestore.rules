@@ -42,12 +42,18 @@ service cloud.firestore {
 
       match /stato/{doc} {
         allow read: if true;
+        // Cosa mostra lo schermo.
         allow write: if doc == 'schermo'
                      && request.resource.data.keys().hasOnly(['modo', 'domanda', 'aggiornato'])
                      && request.resource.data.modo is string
                      && request.resource.data.modo.size() >= 1 && request.resource.data.modo.size() <= 20
                      && (request.resource.data.domanda == null
                          || (request.resource.data.domanda is string && request.resource.data.domanda.size() <= 40));
+        // Testi delle domande modificati dalla regia (gli identificativi non cambiano).
+        allow write: if doc == 'domande'
+                     && request.resource.data.keys().hasOnly(['testi', 'aggiornato'])
+                     && request.resource.data.testi is map
+                     && request.resource.data.testi.size() <= 30;
       }
     }
 
