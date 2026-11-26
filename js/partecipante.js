@@ -24,7 +24,6 @@ const bozza = {
   scrivi(b) { try { sessionStorage.setItem(pref + 'bozza', JSON.stringify(b)); } catch { /* ok */ } },
 };
 const nomeSalvato = () => memoria.leggi('nome') || '';
-const benvenutoVisto = () => memoria.leggi('benvenuto') === '1';
 
 // ── Testi dal config ───────────────────────────────────────────────────────
 for (const n of document.querySelectorAll('[data-t]')) n.textContent = T[n.dataset.t] ?? '';
@@ -75,7 +74,8 @@ let ultimoInviato = null;
 function mostra() {
   let [nome, arg] = location.hash.slice(1).split('/');
   if (!schermate.some(s => s.dataset.schermata === nome)) {
-    nome = benvenutoVisto() ? 'scrivi' : 'benvenuto';
+    // Chi apre il link o inquadra il QR parte sempre dalla schermata del nome.
+    nome = 'benvenuto';
     history.replaceState(null, '', '#' + nome);
   }
   if (nome === 'inviato' && !ultimoInviato) { nome = 'scrivi'; history.replaceState(null, '', '#scrivi'); }
@@ -93,7 +93,6 @@ function apriBenvenuto() {
 }
 function chiudiBenvenuto(conNome) {
   memoria.scrivi('nome', conNome ? $('nome').value.trim().slice(0, config.limiti.caratteriNome) : '');
-  memoria.scrivi('benvenuto', '1');
   const b = bozza.leggi();
   location.hash = b.domanda ? `scrivi/${encodeURIComponent(b.domanda)}` : 'scrivi';
 }
