@@ -96,12 +96,12 @@ export default {
   // Collegamento a Firebase (Impostazioni progetto → Le tue app → Configurazione SDK).
   // Se apiKey è vuoto l'app funziona in modalità demo, con dati finti.
   firebase: {
-    apiKey: '',
-    authDomain: '',
-    projectId: '',
-    storageBucket: '',
-    messagingSenderId: '',
-    appId: '',
+    apiKey: 'AIzaSyCX35wEn022CyE4gAxV0G-knrbknUWvek4',
+    authDomain: 'bacheca-eventi-lama.firebaseapp.com',
+    projectId: 'bacheca-eventi-lama',
+    storageBucket: 'bacheca-eventi-lama.firebasestorage.app',
+    messagingSenderId: '65422195270',
+    appId: '1:65422195270:web:3229d36d8ab5e5b328e847',
   },
 
   // Testi dell'interfaccia del pubblico e dello schermo.
