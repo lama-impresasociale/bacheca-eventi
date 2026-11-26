@@ -46,6 +46,11 @@ Per non correre rischi puoi passare al piano Blaze: la stessa soglia resta gratu
 
 Ogni modifica pubblicata su `main` va online da sola in circa un minuto.
 
+## Prove prima dell'evento
+
+Aggiungi `?evento=prova` agli indirizzi (per esempio `regia.html?evento=prova` e `schermo.html?evento=prova`): tutte le pagine lavorano su un evento separato e il QR dello schermo porta i telefoni sulla stessa prova.
+I contributi di prova restano in `eventi/prova` e non compaiono nell'evento vero né nel suo CSV. Puoi usare qualsiasi nome (`prova-2`, `generale`…) per ripartire da zero.
+
 ## Durante l'evento
 
 - **Proiettore:** dalla regia, scheda *Schermo*, premi *Apri lo schermo*, trascina la finestra sul proiettore e premi `F` (o doppio clic) per il tutto schermo. Da quel momento cambi cosa mostra dalla regia.

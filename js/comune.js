@@ -7,6 +7,13 @@ export const T = config.testi;
 const parametri = new URLSearchParams(location.search);
 export const inDemo = parametri.has('demo') || !config.firebase?.apiKey;
 
+// ?evento=prova fa lavorare tutte le pagine su un evento separato (utile per le prove):
+// i dati di prova non si mescolano a quelli veri.
+const eventoDaIndirizzo = parametri.get('evento');
+export const eventoDiProva = eventoDaIndirizzo && /^[a-z0-9-]{1,40}$/.test(eventoDaIndirizzo) && eventoDaIndirizzo !== config.evento.id
+  ? eventoDaIndirizzo : null;
+if (eventoDiProva) config.evento.id = eventoDiProva;
+
 /** Applica i colori del config come variabili CSS. */
 export function applicaColori() {
   const c = config.colori || {};
@@ -28,15 +35,14 @@ export async function apriStore() {
 /** Mantiene i parametri ?demo / ?emulatore nei link tra le pagine. */
 export function conParametri(url) {
   const u = new URL(url, location.href);
-  for (const k of ['demo', 'emulatore']) if (parametri.has(k)) u.searchParams.set(k, parametri.get(k));
+  for (const k of ['demo', 'emulatore', 'evento']) if (parametri.has(k)) u.searchParams.set(k, parametri.get(k));
   return u.pathname.split('/').pop() + u.search + u.hash;
 }
 
 /** Indirizzo pubblico della pagina partecipante (per il QR). */
 export function indirizzoApp() {
-  if (config.indirizzoPubblico) return config.indirizzoPubblico;
-  const u = new URL('./', location.href);
-  return u.origin + u.pathname;
+  const base = config.indirizzoPubblico || (() => { const u = new URL('./', location.href); return u.origin + u.pathname; })();
+  return eventoDiProva ? `${base}?evento=${eventoDiProva}` : base;
 }
 
 export const domande = config.domande;

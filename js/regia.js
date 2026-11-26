@@ -1,6 +1,6 @@
 // Regia: moderazione, temi, post-it, domande ai relatori, schermo, esportazione.
 import {
-  config, applicaColori, apriStore, el, icona, domande, domanda, plurale, ora, dataOra,
+  config, applicaColori, apriStore, el, icona, domande, domanda, plurale, ora, dataOra, eventoDiProva,
   piuRecentiPrima, piuVecchiPrima, partiScheda, inDemo, conParametri, riconcilia, seguiRete,
 } from './comune.js';
 
@@ -30,6 +30,9 @@ try {
 if (inDemo) {
   avviso('Modalità demo: dati finti, visibili solo in questo browser. Apri la pagina del pubblico in un’altra scheda per vedere gli aggiornamenti.', 0,
     el('button', { type: 'button', class: 'pulsante-testo', onclick: () => store.ripristinaDemo() }, 'Ripristina dati demo'));
+}
+if (eventoDiProva) {
+  avviso(`Evento di prova «${eventoDiProva}»: questi dati sono separati da quelli dell’evento vero. Per tornare all’evento vero apri regia.html senza ?evento.`);
 }
 let avvisoRete = null;
 seguiRete(online => {
