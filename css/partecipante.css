@@ -13,7 +13,9 @@ html { scroll-padding-bottom: 110px; } /* il testo che si scrive non finisce sot
   flex: 1;
 }
 
-.testata-titolo { font-size: 14px; color: var(--testo-2); font-weight: var(--medio); margin-bottom: 22px; }
+.testata-scelta { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; margin-bottom: 22px; }
+.testata-titolo { font-size: 14px; color: var(--testo-2); font-weight: var(--medio); min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.link-nome { flex: none; font-size: 15px; font-weight: var(--medio); padding: 6px 0; }
 
 /* Benvenuto */
 .titolo-evento { font-size: clamp(32px, 9.5vw, 44px); margin-top: 24px; font-weight: var(--forte); }

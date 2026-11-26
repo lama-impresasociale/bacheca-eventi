@@ -123,7 +123,12 @@ function apriScrivi(id) {
   $('scrittura').hidden = !id;
   $('barra-scrivi').hidden = !id;
   clearInterval(timerAttesa);
-  if (!id) return;
+  if (!id) {
+    // In cima alla scelta: il nome si può aggiungere o cambiare, mai durante la scrittura.
+    const nome = nomeSalvato();
+    $('link-nome').textContent = nome ? `${nome} · ${T.nomeCambia}` : T.nomeAssente;
+    return;
+  }
   const d = domanda(id);
   $('domanda-scelta').style.setProperty('--c', d.colore);
   $('scelta-etichetta').textContent = d.titolo;

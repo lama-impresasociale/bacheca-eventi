@@ -115,6 +115,8 @@ export default {
     continua: 'Continua',
 
     sceltaTitolo: 'Su cosa vuoi intervenire?',
+    nomeAssente: 'Il tuo nome',           // link in cima alla scelta delle domande
+    nomeCambia: 'cambia',
     cambiaDomanda: 'Cambia domanda',
     contributo: 'Il tuo contributo',
     contributoSegnaposto: 'Scrivi qui',
