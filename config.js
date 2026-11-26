@@ -22,7 +22,7 @@ export default {
   // Due righe di informativa nella schermata di benvenuto.
   privacy: {
     righe: [
-      'I contributi compaiono nella bacheca pubblica e possono essere proiettati in sala. Il nome è facoltativo.',
+      'I contributi possono essere proiettati in sala durante l’incontro. Il nome è facoltativo.',
       'Titolare del trattamento: LAMA Impresa Sociale. I dati servono solo a restituire gli esiti dell’incontro e non vengono ceduti a terzi.',
     ],
     // Facoltativo: indirizzo dell'informativa completa. Se vuoto il link non compare.
@@ -106,6 +106,7 @@ export default {
 
   // Testi dell'interfaccia del pubblico e dello schermo.
   testi: {
+    // Pubblico (telefono)
     benvenutoNome: 'Il tuo nome',
     benvenutoNomeAiuto: 'Facoltativo. Comparirà accanto a ciò che scrivi.',
     benvenutoNomeSegnaposto: 'Scrivi qui il tuo nome',
@@ -114,44 +115,38 @@ export default {
     continua: 'Continua',
 
     sceltaTitolo: 'Su cosa vuoi intervenire?',
-    sceltaAiuto: 'Scegli una delle cinque domande.',
     cambiaDomanda: 'Cambia domanda',
     contributo: 'Il tuo contributo',
     contributoSegnaposto: 'Scrivi qui',
-    firmato: 'Firmato',
-    anonimo: 'Anonimo',
-    cambiaNome: 'cambia',
-    aggiungiNome: 'aggiungi il nome',
     invia: 'Invia',
     attendi: 'Attendi {s} s',
     inviando: 'Invio in corso',
 
-    inviatoTitolo: 'Grazie. Il tuo contributo è in bacheca.',
+    inviatoTitolo: 'Grazie. Il tuo contributo è arrivato.',
     inviatoAttesa: 'Sei senza rete. Il contributo partirà appena la connessione torna: tieni aperta questa pagina.',
     erroreInvio: 'Il contributo non è partito. Controlla la connessione e riprova.',
     scriviAncora: 'Scrivi ancora',
-    vaiBacheca: 'Vai alla bacheca',
+    inInvio: 'In invio',
 
-    bacheca: 'Bacheca',
-    tutte: 'Tutte',
-    tuttiTemi: 'Tutti i temi',
+    senzaRete: 'Sei senza rete: quello che invii partirà appena torna la connessione.',
+    demo: 'Modalità demo: dati finti, visibili solo in questo browser.',
+    erroreCollegamento: 'Non riesco a collegarmi. Riprova tra poco.',
+
+    // Schede dei contributi (conferma, schermo)
+    anonimo: 'Anonimo',
     contributoSingolare: 'contributo',
     contributoPlurale: 'contributi',
-    nessunContributo: 'Ancora nessun contributo. Il primo puoi scriverlo tu.',
-    nessunRisultato: 'Nessun contributo con questo filtro.',
-    scrivi: 'Scrivi',
     inEvidenza: 'In evidenza',
     giaPosta: 'Già posta',
     daPostit: 'Da post-it',
-    senzaRete: 'Senza rete: la bacheca si aggiorna appena torna la connessione.',
-    demo: 'Modalità demo: dati finti, visibili solo in questo browser.',
-    erroreCollegamento: 'Non riesco a collegarmi alla bacheca. Riprova tra poco.',
-    inInvio: 'In invio',
 
+    // Schermo (proiettore)
     schermoInvito: 'Inquadra il codice e scrivi il tuo contributo',
     schermoScriviAnche: 'Scrivi anche tu',
     schermoNessunaEvidenza: 'Qui compariranno i contributi scelti dalla regia.',
     schermoSenzaTema: 'Senza tema',
     schermoNessunTema: 'I temi di questa domanda non sono ancora stati definiti.',
+    schermoBacheca: 'Tutti i contributi',
+    schermoBachecaVuota: 'Ancora nessun contributo.',
   },
 };

@@ -46,9 +46,9 @@ body.nascondi-cursore, body.nascondi-cursore * { cursor: none !important; }
 
 /* Accoglienza */
 .m-accoglienza { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: calc(5 * var(--u)); align-items: center; }
-.m-accoglienza h1 { font-size: calc(5.6 * var(--u)); line-height: 1.08; }
+.m-accoglienza h1 { font-size: calc(5.6 * var(--u)); line-height: 1.08; font-weight: var(--forte); }
 .a-sotto { margin-top: calc(2 * var(--u)); font-size: calc(1.8 * var(--u)); color: var(--testo-2); }
-.a-invito { margin-top: calc(6 * var(--u)); font-size: calc(2.6 * var(--u)); line-height: 1.3; max-width: 22em; }
+.a-invito { margin-top: calc(6 * var(--u)); font-size: calc(2.6 * var(--u)); line-height: 1.3; max-width: 22em; font-weight: var(--medio); }
 .a-qr { justify-self: end; text-align: center; }
 .a-qr .qr { width: calc(32 * var(--u)); height: calc(32 * var(--u)); margin-left: auto; }
 .a-url { margin-top: calc(1.6 * var(--u)); font-size: calc(1.5 * var(--u)); color: var(--bosco); overflow-wrap: anywhere; max-width: calc(32 * var(--u)); }
@@ -57,12 +57,12 @@ body.nascondi-cursore, body.nascondi-cursore * { cursor: none !important; }
 .m-evidenza { display: grid; grid-template-columns: calc(22 * var(--u)) minmax(0, 1fr); gap: calc(5 * var(--u)); align-items: start; }
 .e-totale { display: flex; flex-direction: column; padding-top: calc(.5 * var(--u)); }
 .e-totale::before { content: ""; width: calc(5 * var(--u)); height: calc(.7 * var(--u)); background: var(--lime); margin-bottom: calc(2.4 * var(--u)); }
-.numero { font-size: calc(13 * var(--u)); line-height: .9; font-weight: 200; color: var(--bosco); font-variant-numeric: tabular-nums; letter-spacing: -0.03em; }
+.numero { font-size: calc(13 * var(--u)); line-height: .9; font-weight: 300; color: var(--bosco); font-variant-numeric: tabular-nums; letter-spacing: -0.03em; }
 .e-etichetta { margin-top: calc(1.4 * var(--u)); font-size: calc(2.2 * var(--u)); color: var(--testo-2); }
 .e-lista { display: grid; gap: calc(3.2 * var(--u)); align-content: start; animation: entra .6s ease-out; }
 .e-lista .scheda { border-left-width: calc(.45 * var(--u)); padding-left: calc(2.2 * var(--u)); }
 .e-lista .etichetta { font-size: calc(1.2 * var(--u)); }
-.e-lista .scheda-testo { margin-top: calc(.6 * var(--u)); line-height: 1.3; color: var(--testo); }
+.e-lista .scheda-testo { margin-top: calc(.6 * var(--u)); line-height: 1.3; color: var(--testo); font-weight: var(--medio); }
 .e-lista.grande .scheda-testo { font-size: calc(3.4 * var(--u)); }
 .e-lista.medio .scheda-testo { font-size: calc(2.7 * var(--u)); }
 .e-lista.piccolo .scheda-testo { font-size: calc(2.15 * var(--u)); }
@@ -77,17 +77,39 @@ body.nascondi-cursore, body.nascondi-cursore * { cursor: none !important; }
 /* Temi */
 .m-temi { display: grid; grid-template-rows: auto minmax(0, 1fr) auto; gap: calc(3.2 * var(--u)); }
 .t-testa { border-left: calc(.45 * var(--u)) solid var(--c); padding-left: calc(2.2 * var(--u)); }
-.t-testa h2 { margin-top: calc(.8 * var(--u)); font-size: calc(3 * var(--u)); line-height: 1.2; max-width: 34em; }
+.t-testa h2 { margin-top: calc(.8 * var(--u)); font-size: calc(3 * var(--u)); line-height: 1.2; max-width: 34em; font-weight: var(--forte); }
 .t-barre { list-style: none; margin: 0; padding: 0; display: grid; gap: calc(2 * var(--u)); align-content: start; }
 .t-barra { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: calc(.6 * var(--u)) calc(2 * var(--u)); align-items: baseline; }
-.t-nome { font-size: calc(2.4 * var(--u)); line-height: 1.2; }
-.t-conteggio { font-size: calc(2.6 * var(--u)); color: var(--bosco); font-variant-numeric: tabular-nums; }
+.t-nome { font-size: calc(2.4 * var(--u)); line-height: 1.2; font-weight: var(--medio); }
+.t-conteggio { font-size: calc(2.6 * var(--u)); color: var(--bosco); font-weight: var(--forte); font-variant-numeric: tabular-nums; }
 .t-traccia { grid-column: 1 / -1; height: calc(.55 * var(--u)); background: var(--salvia); }
 .t-riempimento { height: 100%; background: var(--c); transition: width .8s ease-out; }
 .t-barre.molti { gap: calc(1.2 * var(--u)); }
 .t-barre.molti .t-nome { font-size: calc(1.9 * var(--u)); }
 .t-barre.molti .t-conteggio { font-size: calc(2 * var(--u)); }
 .t-nota { font-size: calc(1.5 * var(--u)); color: var(--testo-2); }
+
+/* Bacheca: riquadri su tre colonne, dal più recente; quelli che non entrano restano fuori */
+.m-bacheca { display: grid; grid-template-rows: auto minmax(0, 1fr); gap: calc(2.2 * var(--u)); }
+.b-testa { display: flex; justify-content: space-between; align-items: baseline; gap: calc(2 * var(--u)); border-left: calc(.45 * var(--u)) solid var(--c, var(--lime)); padding-left: calc(1.6 * var(--u)); }
+.b-testa .etichetta { font-size: calc(1.5 * var(--u)); }
+.b-conteggio { font-size: calc(1.6 * var(--u)); color: var(--testo-2); font-weight: var(--medio); }
+.b-griglia { --s: calc(var(--u) * var(--scala, 1)); columns: 3; column-gap: calc(2 * var(--u)); column-fill: auto; height: 100%; overflow: hidden; }
+.b-scheda {
+  break-inside: avoid;
+  margin-bottom: calc(1.4 * var(--s));
+  padding: calc(1.2 * var(--s)) calc(1.4 * var(--s)) calc(1.2 * var(--s)) calc(1.9 * var(--s));
+  background: linear-gradient(to right, var(--c) 0 calc(.45 * var(--u)), var(--salvia) calc(.45 * var(--u)));
+  border-radius: calc(.9 * var(--u));
+}
+.b-scheda .etichetta { font-size: calc(.95 * var(--s)); }
+.b-scheda .scheda-testo { margin-top: calc(.4 * var(--s)); font-size: calc(1.75 * var(--s)); line-height: 1.35; font-weight: var(--medio); color: var(--testo); }
+.b-scheda .scheda-piede { margin-top: calc(.6 * var(--s)); font-size: calc(1.15 * var(--s)); gap: calc(1 * var(--s)); }
+.b-scheda .scheda-piede .tag { font-size: calc(1.15 * var(--s)); }
+.b-scheda .scheda-piede .icona { width: calc(1.3 * var(--u)); height: calc(1.3 * var(--u)); }
+@keyframes arrivo-schermo { from { box-shadow: 0 0 0 calc(.35 * var(--u)) var(--lime); } to { box-shadow: 0 0 0 0 transparent; } }
+.b-scheda.nuova { animation: arrivo-schermo 3s ease-out; }
+.b-vuoto { font-size: calc(2.4 * var(--u)); color: var(--testo-2); }
 
 .suggerimento {
   position: fixed;

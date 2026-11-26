@@ -1,6 +1,6 @@
 // Schermo per il proiettore. Cosa mostrare lo decide la regia (documento stato/schermo).
 import {
-  config, T, applicaColori, apriStore, domanda, domande, plurale, partiScheda, piuVecchiPrima, indirizzoApp, el,
+  config, T, applicaColori, apriStore, domanda, domande, plurale, partiScheda, piuVecchiPrima, indirizzoApp, el, riconcilia,
 } from './comune.js';
 import qrcode from './vendor/qrcode.js';
 
@@ -36,12 +36,13 @@ const palco = document.querySelector('.palco');
 let modoMostrato = null;
 
 function disegna() {
-  const modo = ['accoglienza', 'evidenza', 'temi'].includes(stato.modo) ? stato.modo : 'accoglienza';
+  const modo = ['accoglienza', 'evidenza', 'temi', 'bacheca'].includes(stato.modo) ? stato.modo : 'accoglienza';
   for (const s of document.querySelectorAll('.modo')) s.hidden = s.dataset.modo !== modo;
   palco.className = 'palco ' + modo;
   if (modoMostrato !== modo) { modoMostrato = modo; pagina = 0; firmaPagine = ''; }
   if (modo === 'evidenza') disegnaEvidenza();
   if (modo === 'temi') disegnaTemi();
+  if (modo === 'bacheca') disegnaBacheca();
 }
 
 // ── Totale e in evidenza (a pagine, se sono tanti) ─────────────────────────
@@ -127,6 +128,51 @@ function disegnaTemi() {
   if (senza && lista.length) nota.push(`${T.schermoSenzaTema.toLowerCase()}: ${senza}`);
   $('t-nota').textContent = nota.join(' · ');
 }
+
+// ── Bacheca: tutti i contributi, dal più recente ──────────────────────────
+const nodiBacheca = new Map();
+const vistiBacheca = new Set();
+let bachecaCaricata = false;
+function disegnaBacheca() {
+  const d = domanda(stato.domanda);
+  const tutti = d ? contributi.filter(c => c.domanda === d.id) : contributi;
+  const lista = tutti.slice().sort((a, b) => (b.creato || 0) - (a.creato || 0)).slice(0, 60);
+  $('b-testa').style.setProperty('--c', d ? d.colore : 'var(--lime)');
+  $('b-etichetta').textContent = d ? d.titolo : T.schermoBacheca;
+  $('b-conteggio').textContent = plurale(tutti.length);
+  const nomiTemi = new Map(temi.map(t => [t.id, t.nome]));
+  const nodi = lista.map(c => {
+    const nomeTema = nomiTemi.get(c.tema) || null;
+    const firma = [c.testo, c.nome, c.creato, nomeTema, c.fatta, c.origine, !!d].join('|');
+    let v = nodiBacheca.get(c.id);
+    if (!v || v.firma !== firma) {
+      const p = partiScheda({ ...c, evidenza: false, inAttesa: false }, nomeTema, { etichetta: !d });
+      const nodo = el('article', { class: 'b-scheda', '--c': p.colore }, p.testa, p.testo, p.piede);
+      if (bachecaCaricata && !vistiBacheca.has(c.id)) nodo.classList.add('nuova');
+      v = { firma, nodo };
+      nodiBacheca.set(c.id, v);
+    }
+    vistiBacheca.add(c.id);
+    return v.nodo;
+  });
+  riconcilia($('b-griglia'), nodi);
+  $('b-vuoto').hidden = lista.length > 0;
+  bachecaCaricata = true;
+  adattaBacheca();
+}
+
+// Se i contributi non entrano, rimpicciolisce il testo un passo alla volta (fino a circa due terzi).
+// Quelli che non entrano comunque restano fuori: si vedono sempre i più recenti.
+function adattaBacheca() {
+  const g = $('b-griglia');
+  let scala = 1;
+  g.style.setProperty('--scala', scala);
+  while (g.scrollWidth > g.clientWidth + 2 && scala > 0.64) {
+    scala = Math.round((scala - 0.06) * 100) / 100;
+    g.style.setProperty('--scala', scala);
+  }
+}
+addEventListener('resize', () => { if (modoMostrato === 'bacheca') adattaBacheca(); });
 
 // ── Proiettore: tutto schermo e cursore nascosto ───────────────────────────
 if (!anteprima) {

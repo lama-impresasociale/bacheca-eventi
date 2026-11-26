@@ -1,7 +1,7 @@
-// Vista del pubblico: benvenuto → scelta della domanda → scrittura → conferma → bacheca.
+// Vista del pubblico: benvenuto → scelta della domanda → scrittura → conferma.
+// Il pubblico non vede la bacheca: la mostra la regia proiettandola (schermo.html).
 import {
-  config, T, applicaColori, apriStore, el, icona, domande, domanda, plurale,
-  piuRecentiPrima, partiScheda, avvisoDemo, seguiRete,
+  config, T, applicaColori, apriStore, el, icona, domande, domanda, partiScheda, avvisoDemo, seguiRete,
 } from './comune.js';
 
 window.bachecaAvviata = true; // vedi js/avvio.js
@@ -32,8 +32,7 @@ for (const n of document.querySelectorAll('[data-config]')) {
   n.textContent = n.dataset.config.split('.').reduce((o, k) => o?.[k], config) ?? '';
 }
 $('continua').append(icona('avanti'));
-document.querySelector('a.pulsante[href="#bacheca"]').append(icona('avanti'));
-$('fab').prepend(icona('piu'));
+$('scrivi-ancora').append(icona('avanti'));
 $('cambia-domanda').append(icona('indietro'), T.cambiaDomanda);
 $('nome').maxLength = config.limiti.caratteriNome;
 $('nome').placeholder = T.benvenutoNomeSegnaposto || '';
@@ -56,7 +55,8 @@ seguiRete(online => {
   if (online && avvisoRete) { avvisoRete.remove(); avvisoRete = null; }
 });
 
-// Tastiera del telefono: tiene la barra in basso appena sopra la tastiera.
+// Tastiera del telefono. Su Android ci pensa il browser (interactive-widget nel meta viewport);
+// su iPhone la tastiera copre la pagina: spostiamo la barra in basso di quanto serve.
 if (window.visualViewport) {
   const vv = window.visualViewport;
   const agg = () => {
@@ -65,9 +65,10 @@ if (window.visualViewport) {
   };
   vv.addEventListener('resize', agg);
   vv.addEventListener('scroll', agg);
+  agg();
 }
 
-// ── Navigazione (hash: #benvenuto, #scrivi, #scrivi/<id>, #inviato, #bacheca) ─
+// ── Navigazione (hash: #benvenuto, #scrivi, #scrivi/<id>, #inviato) ────────
 const schermate = [...document.querySelectorAll('[data-schermata]')];
 let ultimoInviato = null;
 
@@ -83,7 +84,6 @@ function mostra() {
   if (nome === 'benvenuto') apriBenvenuto();
   if (nome === 'scrivi') apriScrivi(arg && domanda(decodeURIComponent(arg)) ? decodeURIComponent(arg) : null);
   if (nome === 'inviato') apriInviato();
-  if (nome === 'bacheca') apriBacheca();
 }
 addEventListener('hashchange', mostra);
 
@@ -133,18 +133,8 @@ function apriScrivi(id) {
   const b = bozza.leggi();
   testo.value = b.testo || '';
   $('errore').hidden = true;
-  aggiornaFirma();
   aggiornaTesto();
   timerAttesa = setInterval(aggiornaPulsante, 1000);
-}
-
-function aggiornaFirma() {
-  const nome = nomeSalvato();
-  const f = $('firma');
-  f.replaceChildren(
-    nome ? `${T.firmato}: ${nome} · ` : `${T.anonimo} · `,
-    el('a', { href: '#benvenuto', class: 'pulsante-testo' }, nome ? T.cambiaNome : T.aggiungiNome),
-  );
 }
 
 function adattaAltezza() {
@@ -191,6 +181,7 @@ $('invia').addEventListener('click', async () => {
   if (!valore || !domandaCorrente || restoAttesa() > 0 || invioInCorso) return;
   invioInCorso = true;
   aggiornaPulsante();
+  testo.blur(); // chiude la tastiera
   const dati = { domanda: domandaCorrente, testo: valore, nome: nomeSalvato(), origine: 'app' };
   let confermato = false;
   // Se dopo qualche secondo il server non ha ancora risposto (rete assente o lenta)
@@ -230,103 +221,15 @@ $('invia').addEventListener('click', async () => {
   }
 });
 
-// ── 2b. Conferma ───────────────────────────────────────────────────────────
+// ── 3. Conferma ────────────────────────────────────────────────────────────
 function apriInviato() {
   const c = ultimoInviato;
   $('inviato-titolo').textContent = c.inAttesa ? T.inInvio : T.inviatoTitolo;
   $('inviato-attesa').hidden = !c.inAttesa;
   $('inviato-attesa').textContent = T.inviatoAttesa;
   const p = partiScheda({ ...c, inAttesa: false }, null);
-  $('inviato-anteprima').replaceChildren(el('article', { class: 'scheda', '--c': p.colore }, p.testa, p.testo, p.piede));
+  $('inviato-anteprima').replaceChildren(el('article', { class: 'scheda riquadro', '--c': p.colore }, p.testa, p.testo, p.piede));
   $('inviato-titolo').focus({ preventScroll: true });
 }
-$('scrivi-ancora').addEventListener('click', () => {
-  location.hash = ultimoInviato ? `scrivi/${encodeURIComponent(ultimoInviato.domanda)}` : 'scrivi';
-});
-
-// ── 3. Bacheca ─────────────────────────────────────────────────────────────
-let contributi = [];
-let temi = [];
-const filtro = { domanda: null, tema: null };
-let bachecaAttiva = false;
-let primoCarico = true;
-const visti = new Set();
-const nodi = new Map(); // id -> { firma, nodo }
-
-function apriBacheca() {
-  if (bachecaAttiva) { disegna(); return; }
-  bachecaAttiva = true;
-  disegnaFiltri();
-  storePronto.then(store => {
-    store.ascoltaContributi(lista => { contributi = lista.filter(c => !c.rimosso); disegna(); }, () => avviso(T.erroreCollegamento));
-    store.ascoltaTemi(lista => { temi = lista; disegna(); });
-  });
-}
-
-function disegnaFiltri() {
-  const riga = $('filtri-domande');
-  const voci = [{ id: null, breve: T.tutte, colore: null }, ...domande];
-  riga.replaceChildren(...voci.map(d => el('button', {
-    type: 'button',
-    class: 'filtro',
-    'aria-pressed': String(filtro.domanda === d.id),
-    '--c': d.colore || undefined,
-    onclick: () => { filtro.domanda = d.id; filtro.tema = null; disegnaFiltri(); disegna(); },
-  }, d.colore ? el('span', { class: 'pallino' }) : null, d.breve || d.titolo)));
-}
-
-function disegnaTemi(visibili) {
-  const riga = $('filtri-temi');
-  if (!filtro.domanda) { riga.hidden = true; return; }
-  const conteggi = new Map();
-  for (const c of visibili) if (c.tema) conteggi.set(c.tema, (conteggi.get(c.tema) || 0) + 1);
-  const disponibili = temi.filter(t => t.domanda === filtro.domanda && conteggi.get(t.id)).sort((a, b) => conteggi.get(b.id) - conteggi.get(a.id));
-  if (filtro.tema && !disponibili.some(t => t.id === filtro.tema)) filtro.tema = null;
-  riga.hidden = disponibili.length === 0;
-  const colore = domanda(filtro.domanda)?.colore;
-  riga.replaceChildren(
-    el('button', { type: 'button', class: 'filtro', '--c': colore, 'aria-pressed': String(!filtro.tema), onclick: () => { filtro.tema = null; disegna(); } }, T.tuttiTemi),
-    ...disponibili.map(t => el('button', {
-      type: 'button', class: 'filtro', '--c': colore, 'aria-pressed': String(filtro.tema === t.id),
-      onclick: () => { filtro.tema = t.id; disegna(); },
-    }, t.nome, ' ', el('small', {}, String(conteggi.get(t.id))))),
-  );
-}
-
-function disegna() {
-  const nomiTemi = new Map(temi.map(t => [t.id, t.nome]));
-  const perDomanda = filtro.domanda ? contributi.filter(c => c.domanda === filtro.domanda) : contributi;
-  disegnaTemi(perDomanda);
-  const visibili = (filtro.tema ? perDomanda.filter(c => c.tema === filtro.tema) : perDomanda).slice().sort(piuRecentiPrima);
-
-  $('conteggio-totale').textContent = plurale(contributi.length);
-  $('conteggio').textContent = filtro.domanda ? plurale(visibili.length) : '';
-  $('conteggio').hidden = !filtro.domanda;
-
-  const elementi = visibili.map(c => {
-    const nomeTema = c.tema ? nomiTemi.get(c.tema) || null : null;
-    const firma = [c.testo, c.nome, c.creato, nomeTema, c.evidenza, c.fatta, c.origine, c.inAttesa].join('|');
-    let voce = nodi.get(c.id);
-    if (!voce || voce.firma !== firma) {
-      const p = partiScheda(c, nomeTema, { etichetta: !filtro.domanda });
-      const nodo = el('article', { class: 'scheda', '--c': p.colore }, p.testa, p.testo, p.piede);
-      if (!primoCarico && !visti.has(c.id)) nodo.classList.add('nuova');
-      voce = { firma, nodo };
-      nodi.set(c.id, voce);
-    }
-    visti.add(c.id);
-    return voce.nodo;
-  });
-  // Le etichette cambiano con il filtro: ridisegna le schede quando cambia filtro.
-  $('lista').replaceChildren(...elementi);
-  if (contributi.length) primoCarico = false;
-
-  const vuoto = $('vuoto');
-  vuoto.hidden = visibili.length > 0;
-  vuoto.textContent = contributi.length ? T.nessunRisultato : T.nessunContributo;
-}
-
-// Quando cambia il filtro per domanda l'etichetta della scheda cambia: svuota la cache dei nodi.
-$('filtri-domande').addEventListener('click', () => nodi.clear(), true);
 
 mostra();

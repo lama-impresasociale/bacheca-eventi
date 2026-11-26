@@ -41,7 +41,7 @@ seguiRete(online => {
   if (online && avvisoRete) { avvisoRete.remove(); avvisoRete = null; }
 });
 
-$('link-pubblico').href = conParametri('index.html#bacheca');
+$('link-pubblico').href = conParametri('index.html');
 $('link-schermo').href = conParametri('schermo.html');
 $('s-apri').href = conParametri('schermo.html');
 $('link-schermo').prepend(icona('schermo'));
@@ -393,20 +393,27 @@ function disegnaRelatori() {
 // ── Schermo ────────────────────────────────────────────────────────────────
 const modi = [
   { id: 'accoglienza', titolo: 'Accoglienza', nota: 'Titolo dell’evento e QR code grande, per invitare a partecipare.' },
+  { id: 'bacheca', titolo: 'Bacheca', nota: 'Tutti i contributi, dal più recente, man mano che arrivano. Quelli che rimuovi spariscono subito.' },
   { id: 'evidenza', titolo: 'Totale e in evidenza', nota: 'Il numero dei contributi e quelli in evidenza a caratteri grandi.' },
   { id: 'temi', titolo: 'Temi di una domanda', nota: 'I temi di una domanda, con il numero di contributi per tema.' },
 ];
+// Domanda scelta per ciascuna modalità che ne usa una (la bacheca può mostrarle tutte).
+const domandaPerModo = { temi: domande.find(d => !d.relatori)?.id || domande[0]?.id, bacheca: '' };
 function disegnaSchermo() {
   const attuale = statoSchermo.modo || 'accoglienza';
-  const domandaTemi = statoSchermo.domanda || domande[0]?.id;
+  if (attuale === 'temi' && statoSchermo.domanda) domandaPerModo.temi = statoSchermo.domanda;
+  if (attuale === 'bacheca') domandaPerModo.bacheca = statoSchermo.domanda || '';
+  const imposta = (modo, domanda) => store.impostaSchermo({ modo, domanda: domanda || null }).catch(errore);
   $('s-modi').replaceChildren(...modi.map(m => {
     const scelto = m.id === attuale;
-    const radio = el('input', { type: 'radio', name: 's-modo', value: m.id, checked: scelto, onchange: () => store.impostaSchermo({ modo: m.id, domanda: domandaTemi }).catch(errore) });
+    const radio = el('input', { type: 'radio', name: 's-modo', value: m.id, checked: scelto, onchange: () => imposta(m.id, domandaPerModo[m.id]) });
     const parti = [radio, el('strong', {}, m.titolo), el('span', { class: 'nota' }, m.nota)];
-    if (m.id === 'temi') {
-      const s = el('select', { class: 'campo', 'aria-label': 'Domanda da mostrare', onchange: e => store.impostaSchermo({ modo: 'temi', domanda: e.target.value }).catch(errore) },
-        ...domande.filter(d => !d.relatori).map(d => el('option', { value: d.id }, d.breve || d.titolo)));
-      s.value = domandaTemi;
+    if (m.id === 'temi' || m.id === 'bacheca') {
+      const voci = m.id === 'temi'
+        ? domande.filter(d => !d.relatori).map(d => el('option', { value: d.id }, d.breve || d.titolo))
+        : [el('option', { value: '' }, 'Tutte le domande'), ...domande.map(d => el('option', { value: d.id }, d.breve || d.titolo))];
+      const s = el('select', { class: 'campo', 'aria-label': 'Domanda da mostrare', onchange: e => { domandaPerModo[m.id] = e.target.value; imposta(m.id, e.target.value); } }, ...voci);
+      s.value = domandaPerModo[m.id];
       parti.push(s);
     }
     return el('label', { class: 's-modo' + (scelto ? ' attivo' : '') }, ...parti);

@@ -44,7 +44,8 @@ service cloud.firestore {
         allow read: if true;
         allow write: if doc == 'schermo'
                      && request.resource.data.keys().hasOnly(['modo', 'domanda', 'aggiornato'])
-                     && request.resource.data.modo in ['accoglienza', 'evidenza', 'temi']
+                     && request.resource.data.modo is string
+                     && request.resource.data.modo.size() >= 1 && request.resource.data.modo.size() <= 20
                      && (request.resource.data.domanda == null
                          || (request.resource.data.domanda is string && request.resource.data.domanda.size() <= 40));
       }

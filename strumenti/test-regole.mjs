@@ -63,7 +63,9 @@ await prova('elimina tema', 'ammesso', () => deleteDoc(doc(temi, t)));
 
 const schermo = doc(db, 'eventi', ev, 'stato', 'schermo');
 await prova('schermo: modo valido', 'ammesso', () => setDoc(schermo, { modo: 'temi', domanda: 'senza-auto', aggiornato: serverTimestamp() }));
-await prova('schermo: modo sconosciuto', 'rifiutato', () => setDoc(schermo, { modo: 'altro', domanda: null, aggiornato: serverTimestamp() }));
+await prova('schermo: modo bacheca', 'ammesso', () => setDoc(schermo, { modo: 'bacheca', domanda: null, aggiornato: serverTimestamp() }));
+await prova('schermo: modo vuoto', 'rifiutato', () => setDoc(schermo, { modo: '', domanda: null, aggiornato: serverTimestamp() }));
+await prova('schermo: campo in più', 'rifiutato', () => setDoc(schermo, { modo: 'temi', domanda: null, extra: 1 }));
 await prova('altro documento in stato', 'rifiutato', () => setDoc(doc(db, 'eventi', ev, 'stato', 'x'), { modo: 'temi' }));
 await prova('collezione non prevista', 'rifiutato', () => addDoc(collection(db, 'altro'), { a: 1 }));
 

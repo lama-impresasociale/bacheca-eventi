@@ -9,9 +9,9 @@ Pilota: **Stati Generali di Vallombrosa**, sabato 28 novembre 2026, Reggello.
 
 | Pagina | Per chi | Cosa fa |
 |---|---|---|
-| `index.html` | pubblico, da telefono | benvenuto con nome facoltativo, scelta della domanda, scrittura (400 caratteri), conferma, bacheca in tempo reale filtrabile per domanda e tema |
+| `index.html` | pubblico, da telefono | benvenuto con nome facoltativo, scelta della domanda, scrittura (400 caratteri), conferma. Il pubblico non vede la bacheca: la mostra la regia sul proiettore |
 | `regia.html` | regia, da computer | rimozione e ripristino, temi (crea, rinomina, unisci, elimina, assegna anche a più contributi insieme), in evidenza, inserimento dei post-it, domande ai relatori con "fatta", comandi dello schermo, esportazione CSV |
-| `schermo.html` | proiettore | tre modalità scelte dalla regia: accoglienza con QR grande, totale e contributi in evidenza, temi di una domanda con i conteggi |
+| `schermo.html` | proiettore | quattro modalità scelte dalla regia: accoglienza con QR grande, bacheca con tutti i contributi dal più recente (anche di una sola domanda), totale e contributi in evidenza, temi di una domanda con i conteggi |
 
 **Modalità demo.** Finché in `config.js` manca la configurazione Firebase, tutte le pagine funzionano con dati finti salvati nel browser.
 Con Firebase configurato, la demo resta disponibile aggiungendo `?demo` all'indirizzo (per esempio `regia.html?demo`).
@@ -34,7 +34,7 @@ Per un nuovo evento cambia almeno `evento.id`: i dati di ogni evento restano sep
 
 Questi valori non sono segreti: identificano il progetto, e la protezione dei dati sta nelle regole.
 
-**Piano gratuito o a pagamento?** Con 50 partecipanti si stimano 20.000-35.000 letture nella giornata, sotto la soglia gratuita di 50.000 letture al giorno del piano Spark.
+**Piano gratuito o a pagamento?** Il pubblico scrive soltanto e non legge la bacheca: le letture vengono quasi solo da regia e schermo, poche migliaia in tutta la giornata, ben sotto la soglia gratuita di 50.000 letture al giorno del piano Spark.
 Se la soglia si esaurisce, Firestore smette di rispondere fino alle 9 del mattino dopo (mezzanotte del Pacifico).
 Per non correre rischi puoi passare al piano Blaze: la stessa soglia resta gratuita e l'eccedenza costerebbe pochi centesimi. In quel caso imposta un avviso di budget.
 
@@ -54,6 +54,7 @@ I contributi di prova restano in `eventi/prova` e non compaiono nell'evento vero
 ## Durante l'evento
 
 - **Proiettore:** dalla regia, scheda *Schermo*, premi *Apri lo schermo*, trascina la finestra sul proiettore e premi `F` (o doppio clic) per il tutto schermo. Da quel momento cambi cosa mostra dalla regia.
+- **Bacheca proiettata:** la modalità *Bacheca* mostra i contributi dal più recente, man mano che arrivano, senza un tuo filtro preventivo: quelli che rimuovi in regia spariscono subito. Se non entrano tutti il testo si rimpicciolisce; oltre un certo punto si vedono i più recenti.
 - **Post-it:** in regia, *Aggiungi da post-it*. La domanda resta selezionata per il post-it successivo; `Ctrl + Invio` aggiunge.
 - **Temi:** scegli una domanda a sinistra; nel pannello a destra crei, rinomini, unisci o elimini i temi. Se selezioni dei contributi prima di creare un tema, il nuovo tema viene assegnato a loro.
 - **Rimuovere:** il contributo sparisce subito da tutte le bacheche e dallo schermo, ma resta nel database. Con *Anche i rimossi* lo ritrovi e lo puoi ripristinare.
@@ -62,7 +63,8 @@ I contributi di prova restano in `eventi/prova` e non compaiono nell'evento vero
 
 ## Sicurezza: cosa protegge e cosa no
 
-- Il pubblico può solo creare contributi validi (campi, lunghezze, orario del server) e leggerli. Non può modificarli né cancellarli.
+- Il pubblico può solo creare contributi validi (campi, lunghezze, orario del server). Non può modificarli né cancellarli.
+- La pagina del pubblico non mostra la bacheca. I dati restano comunque leggibili tecnicamente, perché schermo e regia funzionano senza login: non sono segreti, sono gli stessi che proietti.
 - Nessuno può cancellare un contributo dall'app: la rimozione è solo un segno.
 - **In questo pilota la regia non ha login:** chi conosce l'indirizzo di `regia.html` può moderare. Non è collegata dalla pagina pubblica e le sue azioni si possono annullare.
   Se servirà, si può aggiungere l'accesso con Google limitato a una lista di email.
