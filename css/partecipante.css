@@ -25,6 +25,7 @@ html { scroll-padding-bottom: 110px; } /* il testo che si scrive non finisce sot
 .blocco-campo .etichetta-campo { font-size: 14px; font-weight: var(--forte); color: var(--bosco); }
 .blocco-campo .campo { margin-top: 2px; }
 .blocco-campo .nota { display: block; margin-top: 8px; }
+.privacy:empty { display: none; }
 .privacy { margin-top: 36px; display: grid; gap: 6px; font-size: 13px; line-height: 1.45; color: var(--testo-2); }
 
 /* Barra in basso: il pulsante di conferma sta sempre a destra, nella zona del pollice.

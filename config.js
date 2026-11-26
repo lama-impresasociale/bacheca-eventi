@@ -12,19 +12,17 @@ export default {
     id: 'vallombrosa-2026',
     titolo: 'Stati Generali di Vallombrosa',
     sottotitolo: 'Sabato 28 novembre 2026, ore 15–18 · Reggello',
-    spiegazione: 'Mentre i relatori parlano, scrivi qui idee, proposte e domande. Le raccogliamo e le riportiamo all’assemblea nelle pause.',
+    spiegazione: 'Mentre i relatori parlano, scrivi qui idee, proposte e domande. Le raccogliamo e le riportiamo al termine dell’incontro.',
   },
 
   // Indirizzo pubblico dell'app, usato per il QR code sullo schermo.
   // Se lo lasci vuoto viene ricavato da solo dall'indirizzo della pagina.
   indirizzoPubblico: '',
 
-  // Due righe di informativa nella schermata di benvenuto.
+  // Righe di informativa nella schermata di benvenuto (facoltative).
   privacy: {
-    righe: [
-      'I contributi possono essere proiettati in sala durante l’incontro. Il nome è facoltativo.',
-      'Titolare del trattamento: LAMA Impresa Sociale. I dati servono solo a restituire gli esiti dell’incontro e non vengono ceduti a terzi.',
-    ],
+    // Vuoto: nessuna riga. Per mostrarne, scrivile tra apici separate da virgole.
+    righe: [],
     // Facoltativo: indirizzo dell'informativa completa. Se vuoto il link non compare.
     link: '',
   },
