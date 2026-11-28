@@ -96,7 +96,10 @@ body { padding: 0 20px; }
 .p-piede { display: none; }
 
 .scheda-testo { font-size: 16px; }
-.dettaglio { color: var(--testo-2); }
+.scheda-piede { gap: 6px 8px; margin-top: 8px; }
+.scheda-piede > span:first-child { margin-right: 4px; }
+/* Tag degli altri temi o dettagli: contorno sottile, senza riempimento. */
+.tag-altro { padding: 1px 8px; border: 1px solid var(--linea); border-radius: 3px; font-weight: var(--normale); color: var(--testo-2); line-height: 1.5; }
 
 @media (max-width: 640px) {
   body { padding: 0 16px; }

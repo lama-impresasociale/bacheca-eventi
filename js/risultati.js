@@ -100,7 +100,8 @@ function scheda(c, colore, nomeTema) {
     el('div', { class: 'scheda-piede' },
       el('span', {}, 'Da ' + c.origine),
       nomeTema ? el('span', { class: 'tag tag-tema' }, nomeTema) : null,
-      c.dettaglio ? el('span', { class: 'dettaglio' }, c.dettaglio) : null,
+      // Altri temi o dettagli toccati dal contributo: un tag ciascuno.
+      ...(c.dettaglio || '').split(';').map(v => v.trim()).filter(Boolean).map(v => el('span', { class: 'tag tag-altro' }, v)),
     ),
   );
 }
@@ -144,7 +145,7 @@ document.getElementById('intro').textContent =
 const giorno = new Date(dati.aggiornato + 'T12:00:00').toLocaleDateString('it-IT', { day: 'numeric', month: 'long', year: 'numeric' });
 document.getElementById('nota-metodo').textContent =
   'I temi sono stati assegnati a mano da LAMA Impresa Sociale, in una sola passata: ogni contributo è contato una volta, nel suo tema principale. ' +
-  'Sotto alcuni contributi è riportato un secondo tema o un dettaglio. Non compaiono i contributi rimossi dalla regia. ' +
+  'I tag sotto alcuni contributi indicano altri temi o dettagli che toccano. Non compaiono i contributi rimossi dalla regia. ' +
   `I testi sono riportati come sono stati scritti. Dati aggiornati al ${giorno}.`;
 
 const indice = document.getElementById('indice');
