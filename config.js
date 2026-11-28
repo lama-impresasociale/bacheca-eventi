@@ -15,6 +15,10 @@ export default {
     spiegazione: 'Mentre i relatori parlano, scrivi qui idee, proposte e domande. Le raccogliamo e le riportiamo al termine dell’incontro.',
   },
 
+  // Raccolta chiusa: la pagina del pubblico mostra solo un messaggio di chiusura (testi
+  // chiusaTitolo e chiusaTesto qui sotto), senza modulo. Per riaprirla o per un nuovo evento: false.
+  raccoltaChiusa: true,
+
   // Indirizzo pubblico dell'app, usato per il QR code sullo schermo.
   // Se lo lasci vuoto viene ricavato da solo dall'indirizzo della pagina.
   indirizzoPubblico: '',
@@ -131,6 +135,10 @@ export default {
     senzaRete: 'Sei senza rete: quello che invii partirà appena torna la connessione.',
     demo: 'Modalità demo: dati finti, visibili solo in questo browser.',
     erroreCollegamento: 'Non riesco a collegarmi. Riprova tra poco.',
+
+    // Raccolta chiusa (raccoltaChiusa: true)
+    chiusaTitolo: 'La raccolta dei contributi è chiusa.',
+    chiusaTesto: 'Grazie a chi ha partecipato e ha lasciato il proprio contributo.',
 
     // Schede dei contributi (conferma, schermo)
     anonimo: 'Anonimo',

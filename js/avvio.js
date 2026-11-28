@@ -5,7 +5,7 @@
 // Se non basta, mostriamo un avviso chiaro invece di una pagina che non risponde.
 (function () {
   var FILE = [
-    'config.js', 'js/comune.js', 'js/partecipante.js', 'js/regia.js', 'js/schermo.js',
+    'config.js', 'js/comune.js', 'js/pubblico.js', 'js/partecipante.js', 'js/regia.js', 'js/schermo.js',
     'js/store-firebase.js', 'js/store-demo.js', 'js/dati-demo.js',
     'css/base.css', 'css/partecipante.css', 'css/regia.css', 'css/schermo.css',
   ];

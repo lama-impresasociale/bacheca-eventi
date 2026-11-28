@@ -43,6 +43,8 @@ await prova('orario falso', 'rifiutato', () => addDoc(col, { ...base(), creato: 
 await prova('domanda non valida', 'rifiutato', () => addDoc(col, { ...base(), domanda: 'Domanda con spazi' }));
 await prova('origine non valida', 'rifiutato', () => addDoc(col, { ...base(), origine: 'altro' }));
 
+await prova('evento chiuso: nuovo contributo', 'rifiutato', () => addDoc(collection(db, 'eventi', 'vallombrosa-2026', 'contributi'), base()));
+
 const rif = doc(col, id);
 await prova('regia: assegna tema', 'ammesso', () => updateDoc(rif, { tema: 'abc', aggiornato: serverTimestamp() }));
 await prova('regia: evidenza e rimosso', 'ammesso', () => updateDoc(rif, { evidenza: true, rimosso: true, fatta: true, aggiornato: serverTimestamp() }));

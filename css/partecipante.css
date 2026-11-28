@@ -95,3 +95,7 @@ html { scroll-padding-bottom: 110px; } /* il testo che si scrive non finisce sot
 .attesa { margin-top: 14px; font-size: 16px; color: var(--testo-2); }
 .anteprima { margin-top: 28px; }
 .anteprima .scheda-testo { font-size: 17px; }
+
+/* Raccolta chiusa (config.js → raccoltaChiusa): solo titolo e messaggio */
+.chiusa .titolo-schermata { margin-top: 48px; }
+.chiusa .spiegazione { margin-top: 14px; }

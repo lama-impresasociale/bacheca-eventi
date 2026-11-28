@@ -64,6 +64,13 @@ I contributi di prova restano in `eventi/prova` e non compaiono nell'evento vero
 - **Senza rete:** chi è offline vede un avviso; il contributo resta in coda sul telefono e parte appena torna la connessione.
 - **Fine evento:** *Esporta CSV* scarica tutti i contributi, rimossi compresi, con domanda, tema e stati. Il file si apre direttamente in Excel.
 
+## Chiudere la raccolta
+
+1. In `config.js` metti `raccoltaChiusa: true`: chi apre il link o inquadra il QR vede solo un messaggio di chiusura (testi `chiusaTitolo` e `chiusaTesto`), senza modulo. Regia e schermo continuano a funzionare.
+2. Per bloccare i nuovi contributi anche nel database (per esempio da un telefono che ha ancora la pagina aperta), aggiungi l'id dell'evento in `eventiChiusi()` dentro `firestore.rules` e pubblica le regole nella console Firebase (*Firestore Database → Regole*). Da quel momento nemmeno la regia può aggiungere post-it a quell'evento.
+
+Per riaprire, `raccoltaChiusa: false` e togli l'evento da `eventiChiusi()`.
+
 ## Dopo l'evento: la pagina dei risultati
 
 `risultati.html` non legge Firestore: mostra il contenuto di `js/dati-risultati.js`, generato dall'Excel dei contributi codificati (foglio «Contributi», con le colonne id, data e ora, domanda, testo, tema, rimosso, origine, altri temi).
@@ -95,6 +102,7 @@ regia.html           regia             js/regia.js          css/regia.css
 schermo.html         proiettore        js/schermo.js        css/schermo.css
 risultati.html       risultati         js/risultati.js      css/risultati.css   (dati: js/dati-risultati.js, logo: img/)
 css/base.css         stile comune ricavato dalla presentazione ARCO–LAMA
+js/pubblico.js       avvio della pagina del pubblico: messaggio di chiusura o pagina normale
 js/comune.js         utilità comuni
 js/avvio.js          controllo di avvio: se dopo un aggiornamento il browser mescola file vecchi e nuovi, ricarica da solo
 js/store-firebase.js livello dati su Firestore

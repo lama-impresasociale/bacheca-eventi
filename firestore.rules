@@ -5,6 +5,7 @@ rules_version = '2';
 // Regia (pagina regia.html, senza login in questo pilota): può cambiare solo i campi
 // di moderazione (tema, in evidenza, rimosso, fatta) e gestire i temi e lo schermo.
 // Nessuno può cancellare un contributo dall'app: i "rimossi" restano nel database.
+// Negli eventi elencati in eventiChiusi() non si possono più creare contributi.
 
 service cloud.firestore {
   match /databases/{database}/documents {
@@ -14,7 +15,8 @@ service cloud.firestore {
       match /contributi/{id} {
         allow read: if true;
 
-        allow create: if contributoNuovoValido(request.resource.data);
+        allow create: if contributoNuovoValido(request.resource.data)
+                      && !(evento in eventiChiusi());
 
         allow update: if request.resource.data.diff(resource.data).affectedKeys()
                            .hasOnly(['tema', 'evidenza', 'rimosso', 'fatta', 'aggiornato'])
@@ -70,6 +72,11 @@ service cloud.firestore {
           && d.evidenza == false
           && d.rimosso == false
           && d.fatta == false;
+    }
+
+    // Eventi con la raccolta chiusa: nessun nuovo contributo, nemmeno da post-it in regia.
+    function eventiChiusi() {
+      return ['vallombrosa-2026'];
     }
 
     function nomeTemaValido(n) {
