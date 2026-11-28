@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Risultati · {evento}</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23074844'/%3E%3Crect x='8' y='9' width='16' height='4' fill='%23CED429'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/risultati.css">
+  <script type="module" src="js/risultati.js"></script>
+</head>
+<body>
+  <header class="testata">
+    <h1 class="occhiello" id="titolo"></h1>
+    <p class="sotto" id="sottotitolo"></p>
+    <p class="intro" id="intro"></p>
+    <nav class="indice" id="indice" aria-label="Domande"></nav>
+  </header>
+
+  <main id="domande"></main>
+
+  <footer class="piede">
+    <p class="nota" id="nota-metodo"></p>
+  </footer>
+
+  <!-- Pannello con i contributi di un tema -->
+  <dialog class="pannello" id="pannello" aria-labelledby="p-tema">
+    <header class="p-testa">
+      <div>
+        <span class="etichetta" id="p-domanda"></span>
+        <h2 id="p-tema"></h2>
+        <p class="nota" id="p-conteggio"></p>
+      </div>
+      <button type="button" class="p-chiudi-alto" id="p-chiudi-alto" aria-label="Chiudi"></button>
+    </header>
+    <div class="p-lista" id="p-lista" tabindex="-1"></div>
+    <footer class="p-piede">
+      <button type="button" class="pulsante" id="p-chiudi">Chiudi</button>
+    </footer>
+  </dialog>
+
+  <noscript><p style="padding:24px">Per vedere i risultati serve JavaScript.</p></noscript>
+</body>
+</html>

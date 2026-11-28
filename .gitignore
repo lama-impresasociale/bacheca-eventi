@@ -4,3 +4,4 @@ strumenti/node_modules/
 firebase-debug.log
 firestore-debug.log
 .DS_Store
+*.xlsx

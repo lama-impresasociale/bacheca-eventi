@@ -1,0 +1,123 @@
+/* Pagina dei risultati: una mappa ad aree per domanda, un riquadro per tema. */
+
+body { padding: 0 20px; }
+.testata, main, .piede { max-width: 1080px; margin: 0 auto; }
+
+.testata { padding: 48px 0 8px; }
+.testata h1 { font-size: clamp(28px, 4.2vw, 44px); font-weight: var(--forte); line-height: 1.1; }
+.sotto { margin-top: 10px; color: var(--testo-2); }
+.intro { margin-top: 22px; max-width: 42em; }
+
+.indice { display: flex; flex-wrap: wrap; gap: 6px 22px; margin-top: 26px; padding-top: 14px; border-top: 1px solid var(--linea); font-size: 15px; }
+.indice a { display: inline-flex; align-items: baseline; gap: 7px; min-height: 32px; text-decoration: none; }
+.indice a:hover { text-decoration: underline; }
+.indice .n { color: var(--testo-2); font-variant-numeric: tabular-nums; font-size: 13px; }
+
+/* Una domanda */
+.domanda { padding: 56px 0 8px; scroll-margin-top: 8px; }
+.d-testa { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 6px 32px; align-items: end; padding-left: 14px; border-left: 3px solid var(--c); }
+.d-testa h2 { grid-column: 1; margin-top: 6px; font-size: clamp(20px, 2.6vw, 28px); max-width: 26em; }
+.d-numero { grid-column: 2; grid-row: 1 / span 2; text-align: right; line-height: 1.1; color: var(--testo-2); font-size: 14px; }
+.d-numero b { display: block; font-size: 44px; font-weight: 300; color: var(--bosco); letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+.d-aiuto { margin: 18px 0 10px; }
+
+/* Mappa ad aree */
+.mappa { position: relative; width: 100%; }
+.tema {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 4px;
+  margin: 0;
+  padding: 12px 14px;
+  border: 0;
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--c) 46%, #fff);
+  color: var(--bosco);
+  text-align: left;
+  cursor: pointer;
+  overflow: hidden;
+  transition: background .15s;
+}
+.tema:hover, .tema:focus-visible { background: color-mix(in srgb, var(--c) 72%, #fff); }
+.tema:focus-visible { outline-offset: -3px; }
+.tema.residuale { background: #ECEEEA; color: var(--testo-2); }
+.tema.residuale:hover, .tema.residuale:focus-visible { background: #DFE3DC; }
+.tema-nome { font-size: var(--f, 15px); font-weight: var(--medio); line-height: 1.15; overflow-wrap: break-word; hyphens: auto; }
+.tema-numero { font-size: calc(var(--f, 15px) * 1.7); font-weight: 300; line-height: 1; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+.tema-numero small { margin-left: 6px; font-size: 13px; font-weight: var(--normale); letter-spacing: 0; opacity: .8; }
+/* Riquadri piccoli: prima spariscono le unità, poi il nome (che resta nell'elenco sotto la mappa). */
+.tema.stretto { padding: 6px 8px; }
+.tema.stretto .tema-numero small { display: none; }
+.tema.solo-numero { justify-content: center; align-items: center; padding: 2px; }
+.tema.solo-numero .tema-nome { display: none; }
+.tema.solo-numero .tema-numero { font-size: 15px; font-weight: var(--medio); }
+
+/* Elenco dei temi troppo piccoli per avere il nome nel riquadro */
+.piccoli { display: flex; flex-wrap: wrap; gap: 2px 18px; margin-top: 12px; font-size: 14px; color: var(--testo-2); }
+.piccoli > span { padding: 6px 0; }
+.piccoli button { display: inline-flex; align-items: baseline; gap: 6px; min-height: 32px; padding: 0; border: 0; background: none; color: var(--bosco); cursor: pointer; text-decoration: underline; text-decoration-color: var(--lime); text-decoration-thickness: 1px; text-underline-offset: 4px; }
+.piccoli button .n { color: var(--testo-2); font-size: 13px; }
+
+/* Domande ai relatori: solo elenco */
+.elenco { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr)); gap: 26px 40px; margin-top: 26px; }
+
+.piede { padding: 64px 0 48px; }
+.piede .nota { max-width: 46em; padding-top: 14px; border-top: 1px solid var(--linea); }
+
+/* Pannello dei contributi: laterale su computer, a tutto schermo su telefono */
+.pannello {
+  position: fixed;
+  inset: 0 0 0 auto;
+  width: min(560px, 100%);
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-left: 6px solid var(--c, var(--bosco));
+  background: var(--sfondo);
+  color: var(--testo);
+  overflow: hidden;
+}
+.pannello[open] { display: flex; flex-direction: column; animation: scorri .22s ease-out; }
+.pannello::backdrop { background: rgba(7, 72, 68, .28); }
+@keyframes scorri { from { transform: translateX(28px); opacity: 0; } to { transform: none; opacity: 1; } }
+
+.p-testa { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; padding: 26px 26px 18px; border-bottom: 1px solid var(--linea); }
+.p-testa h2 { margin-top: 6px; font-size: 24px; }
+.p-testa .nota { margin-top: 6px; }
+.p-chiudi-alto { display: grid; place-items: center; width: 44px; height: 44px; margin: -8px -10px 0 0; border: 0; border-radius: 50%; background: none; color: var(--bosco); cursor: pointer; }
+.p-chiudi-alto:hover { background: var(--salvia); }
+.p-lista { flex: 1; overflow-y: auto; overscroll-behavior: contain; padding: 24px 26px 32px; display: grid; align-content: start; gap: 24px; }
+.p-lista:focus { outline: none; }
+.p-piede { display: none; }
+
+.scheda-testo { font-size: 16px; }
+.dettaglio { color: var(--testo-2); }
+
+@media (max-width: 640px) {
+  body { padding: 0 16px; }
+  .testata { padding-top: 32px; }
+  .domanda { padding-top: 44px; }
+  .d-testa { grid-template-columns: 1fr; }
+  .d-numero { grid-column: 1; grid-row: auto; text-align: left; margin-top: 8px; }
+  .d-numero b { display: inline; font-size: 30px; margin-right: 6px; }
+  .tema { padding: 9px 10px; }
+
+  .pannello { width: 100%; border-left: 0; border-top: 6px solid var(--c, var(--bosco)); }
+  @keyframes scorri { from { transform: translateY(28px); opacity: 0; } to { transform: none; opacity: 1; } }
+  .p-testa { padding: 20px 18px 14px; }
+  .p-testa h2 { font-size: 21px; }
+  .p-chiudi-alto { display: none; }
+  .p-lista { padding: 20px 18px 24px; }
+  /* Su telefono il pulsante per chiudere sta in basso a destra, a portata di pollice. */
+  .p-piede { display: flex; justify-content: flex-end; padding: 10px 18px calc(12px + env(safe-area-inset-bottom)); border-top: 1px solid var(--linea); }
+}
+
+@media print {
+  .indice, .d-aiuto, .pannello { display: none; }
+  .domanda { break-inside: avoid; }
+}
