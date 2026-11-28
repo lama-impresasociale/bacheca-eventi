@@ -66,7 +66,8 @@ I contributi di prova restano in `eventi/prova` e non compaiono nell'evento vero
 
 ## Dopo l'evento: la pagina dei risultati
 
-`risultati.html` non legge Firestore: mostra il contenuto di `js/dati-risultati.js`, generato dall'Excel dei contributi codificati (foglio «Contributi», con le colonne domanda, testo, tema, rimosso, origine, altri temi / dettaglio).
+`risultati.html` non legge Firestore: mostra il contenuto di `js/dati-risultati.js`, generato dall'Excel dei contributi codificati (foglio «Contributi», con le colonne domanda, testo, tema, rimosso, origine, altri temi, dettaglio).
+«altri temi» usa gli stessi nomi della colonna «tema», separati da punto e virgola: la pagina li mostra come tag cliccabili e li conta nella vista *Tutte le menzioni*. «dettaglio» contiene note libere, mostrate come tag non cliccabili.
 
 ```bash
 python3 strumenti/excel-in-risultati.py contributi-codificati.xlsx

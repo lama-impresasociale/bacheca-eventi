@@ -4,7 +4,8 @@
 Uso:  python3 strumenti/excel-in-risultati.py contributi.xlsx [js/dati-risultati.js]
 
 Legge il foglio «Contributi» (colonne: domanda, testo, tema, rimosso, origine,
-altri temi / dettaglio). Scarta i contributi rimossi e quelli senza tema.
+altri temi, dettaglio). «altri temi» usa gli stessi nomi di «tema», separati da
+punto e virgola; «dettaglio» sono note libere, anch'esse separate da punto e virgola. Scarta i contributi rimossi e quelli senza tema.
 Nomi, orari e risposte sulla partecipazione NON finiscono nel file prodotto,
 che è pubblico. Serve openpyxl (pip install openpyxl).
 """
@@ -23,6 +24,10 @@ def pulito(v):
     return '' if v is None else str(v).strip()
 
 
+def elenco(v):
+    return [x.strip() for x in pulito(v).split(';') if x.strip()]
+
+
 def main():
     if len(sys.argv) < 2:
         sys.exit(__doc__)
@@ -32,12 +37,12 @@ def main():
     foglio = openpyxl.load_workbook(sorgente, data_only=True)['Contributi']
     righe = foglio.iter_rows(values_only=True)
     testata = [pulito(c).lower() for c in next(righe)]
-    col = {nome: testata.index(nome) for nome in ('domanda', 'testo', 'tema', 'rimosso', 'origine')}
-    col['dettaglio'] = next(i for i, n in enumerate(testata) if n.startswith('altri temi'))
+    col = {nome: testata.index(nome) for nome in ('domanda', 'testo', 'tema', 'rimosso', 'origine', 'altri temi', 'dettaglio')}
 
-    domande = {}          # titolo -> {tema -> [contributi]}, nell'ordine del foglio
+    domande = {}          # titolo -> contributi, nell'ordine del foglio
     scartati = {'rimossi': 0, 'senza tema': 0, 'vuoti': 0}
     for r in righe:
+        r = list(r) + [None] * (len(testata) - len(r))
         domanda, testo, tema = pulito(r[col['domanda']]), pulito(r[col['testo']]), pulito(r[col['tema']])
         if not domanda and not testo:
             continue
@@ -51,22 +56,34 @@ def main():
             scartati['senza tema'] += 1
             continue
         origine = pulito(r[col['origine']]).lower()
-        voce = {'testo': testo, 'origine': ORIGINI.get(origine, origine)}
-        dettaglio = pulito(r[col['dettaglio']])
+        voce = {'testo': testo, 'origine': ORIGINI.get(origine, origine), 'tema': tema}
+        altri = [t for t in elenco(r[col['altri temi']]) if t != tema]
+        if altri:
+            voce['altri'] = altri
+        dettaglio = elenco(r[col['dettaglio']])
         if dettaglio:
             voce['dettaglio'] = dettaglio
-        domande.setdefault(domanda, {}).setdefault(tema, []).append(voce)
+        domande.setdefault(domanda, []).append(voce)
 
     uscita = []
-    for titolo, temi in domande.items():
-        elenco = [{'nome': n, 'residuale': n in RESIDUALI, 'contributi': c} for n, c in temi.items()]
-        elenco.sort(key=lambda t: (t['residuale'], -len(t['contributi'])))
-        for t in elenco:
-            if not t['residuale']:
-                del t['residuale']
-        uscita.append({'titolo': titolo, 'temi': elenco})
+    for titolo, contributi in domande.items():
+        principali, menzioni = {}, {}
+        for c in contributi:
+            principali[c['tema']] = principali.get(c['tema'], 0) + 1
+            for t in c.get('altri', []):
+                menzioni[t] = menzioni.get(t, 0) + 1
+        # Ordine dei temi: per contributi, residuali in fondo, poi i temi citati solo come «altro tema».
+        nomi = sorted(principali, key=lambda t: (t in RESIDUALI, -principali[t]))
+        nomi += sorted((t for t in menzioni if t not in principali), key=lambda t: -menzioni[t])
+        temi = []
+        for n in nomi:
+            t = {'nome': n}
+            if n in RESIDUALI:
+                t['residuale'] = True
+            temi.append(t)
+        uscita.append({'titolo': titolo, 'temi': temi, 'contributi': contributi})
 
-    totale = sum(len(t['contributi']) for d in uscita for t in d['temi'])
+    totale = sum(len(d['contributi']) for d in uscita)
     dati = {'aggiornato': date.today().isoformat(), 'totale': totale, 'domande': uscita}
     with open(destinazione, 'w', encoding='utf-8') as f:
         f.write('// File generato da strumenti/excel-in-risultati.py: non modificarlo a mano.\n')
@@ -76,7 +93,9 @@ def main():
     print(f'{totale} contributi in {destinazione}')
     print('Scartati:', ', '.join(f'{v} {k}' for k, v in scartati.items()))
     for d in uscita:
-        print(f"  {d['titolo']}: {sum(len(t['contributi']) for t in d['temi'])} in {len(d['temi'])} temi")
+        principali = {c['tema'] for c in d['contributi']}
+        soli = [t['nome'] for t in d['temi'] if t['nome'] not in principali]
+        print(f"  {d['titolo']}: {len(d['contributi'])} in {len(principali)} temi" + (f"; solo come altro tema: {', '.join(soli)}" if soli else ''))
 
 
 if __name__ == '__main__':

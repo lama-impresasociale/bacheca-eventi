@@ -13,6 +13,12 @@ body { padding: 0 20px; }
 .indice a:hover { text-decoration: underline; }
 .indice .n { color: var(--testo-2); font-variant-numeric: tabular-nums; font-size: 13px; }
 
+/* Selettore della vista: due voci di testo, quella attiva sottolineata in lime */
+.vista { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 20px; margin-top: 14px; font-size: 15px; }
+.v-etichetta { color: var(--testo-2); }
+.vista button { min-height: 36px; padding: 0 0 2px; border: 0; border-bottom: 3px solid transparent; background: none; color: var(--testo-2); cursor: pointer; }
+.vista button[aria-pressed="true"] { border-bottom-color: var(--lime); color: var(--bosco); font-weight: var(--medio); }
+
 /* Una domanda */
 .domanda { padding: 56px 0 8px; scroll-margin-top: 8px; }
 .d-testa { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 6px 32px; align-items: end; padding-left: 14px; border-left: 3px solid var(--c); }
@@ -49,6 +55,7 @@ body { padding: 0 20px; }
 .tema-numero small { margin-left: 6px; font-size: 13px; font-weight: var(--normale); letter-spacing: 0; opacity: .8; }
 /* Riquadri piccoli: prima spariscono le unità, poi il nome (che resta nell'elenco sotto la mappa). */
 .tema.stretto { padding: 6px 8px; }
+.tema.senza-quota .quota { display: none; }
 .tema.stretto .tema-numero small { display: none; }
 .tema.solo-numero { justify-content: center; align-items: center; padding: 2px; }
 .tema.solo-numero .tema-nome { display: none; }
@@ -98,7 +105,14 @@ body { padding: 0 20px; }
 .scheda-testo { font-size: 16px; }
 .scheda-piede { gap: 6px 8px; margin-top: 8px; }
 .scheda-piede > span:first-child { margin-right: 4px; }
-/* Tag degli altri temi o dettagli: contorno sottile, senza riempimento. */
+/* Tag dei temi: cliccabili, sottolineati in lime. Il tema principale è più marcato. */
+button.tag-tema { padding: 0; border: 0; border-bottom: 1px solid var(--lime); background: none; font: inherit; font-size: 13px; font-weight: var(--medio); color: var(--bosco); cursor: pointer; line-height: 1.5; }
+button.tag-tema:hover { border-bottom-width: 2px; margin-bottom: -1px; }
+.tag-tema.principale { font-weight: var(--pieno); }
+.tag-tema { margin-right: 6px; line-height: 1.5; }
+.p-gruppo { margin: 6px 0 -6px; font-size: 12px; font-weight: var(--pieno); letter-spacing: 0.08em; text-transform: uppercase; color: var(--testo-2); }
+.p-gruppo:not(:first-child) { margin-top: 18px; padding-top: 20px; border-top: 1px solid var(--linea); }
+/* Tag dei dettagli: contorno sottile, senza riempimento, non cliccabili. */
 .tag-altro { padding: 1px 8px; border: 1px solid var(--linea); border-radius: 3px; font-weight: var(--normale); color: var(--testo-2); line-height: 1.5; }
 
 @media (max-width: 640px) {

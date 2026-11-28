@@ -52,12 +52,17 @@ function disegnaMappa(mappa, piccoli, d, colore) {
   const altezza = Math.round(stretta ? Math.min(larghezza * 1.25, 560) : Math.min(larghezza * 0.5, 540));
   mappa.style.height = altezza + 'px';
 
-  const rettangoli = disponi(d.temi.map(t => t.contributi.length), larghezza, altezza);
+  // Vista «tema principale»: ogni contributo conta una volta. Vista «tutte le menzioni»: conta anche dove è citato come altro tema.
+  const conta = t => vista === 'menzioni' ? t.principali.length + t.citazioni.length : t.principali.length;
+  const temi = d.temi.filter(t => conta(t) > 0).sort((x, y) => (x.residuale ? 1 : 0) - (y.residuale ? 1 : 0) || conta(y) - conta(x));
+
+  const rettangoli = disponi(temi.map(conta), larghezza, altezza);
   const nascosti = [];
-  const riquadri = d.temi.map((t, i) => {
+  const riquadri = temi.map((t, i) => {
     const r = rettangoli[i];
     const w = r.w - SPAZIO, h = r.h - SPAZIO;
-    const n = t.contributi.length;
+    const n = conta(t);
+    const quota = Math.round((n / d.totale) * 100) + '%';
     // Il carattere cresce con il riquadro, entro un minimo e un massimo che lo tengono leggibile.
     const corpo = Math.max(CORPO_MIN + 2, Math.min(stretta ? 24 : 34, Math.sqrt(w * h) * (stretta ? 0.09 : 0.07)));
     const b = el('button', {
@@ -65,12 +70,13 @@ function disegnaMappa(mappa, piccoli, d, colore) {
       class: 'tema' + (t.residuale ? ' residuale' : ''),
       style: { left: r.x + 'px', top: r.y + 'px', width: w + 'px', height: h + 'px' },
       '--f': corpo.toFixed(1) + 'px',
-      dataset: { corpo: corpo.toFixed(1) },
-      'aria-label': `${t.nome}: ${plurale(n)}. Apri i contributi`,
-      onclick: () => apriPannello(d, t, colore, b),
+      dataset: { corpo: corpo.toFixed(1), tema: t.nome },
+      'aria-label': `${t.nome}: ${plurale(n)}, ${quota} dei contributi. Apri i contributi`,
+      onclick: () => apriPannello(d, t, b),
     },
       el('span', { class: 'tema-nome' }, t.nome),
-      el('span', { class: 'tema-numero' }, n, el('small', {}, n === 1 ? config.testi.contributoSingolare : config.testi.contributoPlurale)),
+      el('span', { class: 'tema-numero' }, n,
+        el('small', {}, n === 1 ? config.testi.contributoSingolare : config.testi.contributoPlurale, el('span', { class: 'quota' }, ' · ' + quota))),
     );
     return { b, t };
   });
@@ -81,27 +87,37 @@ function disegnaMappa(mappa, piccoli, d, colore) {
   for (const { b, t } of riquadri) {
     let corpo = Number(b.dataset.corpo);
     while (trabocca(b) && corpo > CORPO_MIN) { corpo = Math.max(CORPO_MIN, corpo - 1); b.style.setProperty('--f', corpo + 'px'); }
+    if (trabocca(b)) b.classList.add('senza-quota');
     if (trabocca(b)) b.classList.add('stretto');
     if (trabocca(b)) { b.classList.add('solo-numero'); nascosti.push({ b, t }); }
   }
 
   piccoli.replaceChildren(...(nascosti.length ? [
     el('span', {}, 'Riquadri senza nome:'),
-    ...nascosti.map(({ b, t }) => el('button', { type: 'button', onclick: () => apriPannello(d, t, colore, b) },
-      t.nome, el('span', { class: 'n' }, t.contributi.length))),
+    ...nascosti.map(({ b, t }) => el('button', { type: 'button', onclick: () => apriPannello(d, t, b) },
+      t.nome, el('span', { class: 'n' }, conta(t)))),
   ] : []));
   piccoli.hidden = !nascosti.length;
 }
 
 // ── Scheda di un contributo ──
-function scheda(c, colore, nomeTema) {
-  return el('article', { class: 'scheda', '--c': colore },
+// I temi sono tag cliccabili (aprono i contributi di quel tema); i dettagli sono note, non cliccabili.
+// temaCorrente: il tema del pannello aperto, che non serve ripetere.
+function scheda(c, d, { temaCorrente = null, cliccabili = true } = {}) {
+  const tagTema = (nome, principale) => {
+    const contenuto = [nome, principale ? el('span', { class: 'visivamente-nascosto' }, ' (tema principale)') : null];
+    const classe = 'tag tag-tema' + (principale ? ' principale' : '');
+    return cliccabili
+      ? el('button', { type: 'button', class: classe, title: `Apri i contributi su «${nome}»`, onclick: () => apriPannello(d, d.perNome.get(nome)) }, contenuto)
+      : el('span', { class: classe }, contenuto);
+  };
+  const temi = [c.tema, ...(c.altri || [])];
+  return el('article', { class: 'scheda', '--c': d.colore },
     el('p', { class: 'scheda-testo' }, c.testo),
     el('div', { class: 'scheda-piede' },
       el('span', {}, 'Da ' + c.origine),
-      nomeTema ? el('span', { class: 'tag tag-tema' }, nomeTema) : null,
-      // Altri temi o dettagli toccati dal contributo: un tag ciascuno.
-      ...(c.dettaglio || '').split(';').map(v => v.trim()).filter(Boolean).map(v => el('span', { class: 'tag tag-altro' }, v)),
+      temi.filter(t => t !== temaCorrente).map(t => tagTema(t, t === c.tema)),
+      (c.dettaglio || []).map(v => el('span', { class: 'tag tag-altro' }, v)),
     ),
   );
 }
@@ -110,21 +126,34 @@ function scheda(c, colore, nomeTema) {
 const pannello = document.getElementById('pannello');
 let tornaA = null;
 
-function apriPannello(d, tema, colore, origine) {
-  const n = tema.contributi.length;
+function apriPannello(d, tema, origine) {
+  const n = tema.principali.length, m = tema.citazioni.length;
   const perOrigine = {};
-  for (const c of tema.contributi) perOrigine[c.origine] = (perOrigine[c.origine] || 0) + 1;
+  for (const c of tema.principali) perOrigine[c.origine] = (perOrigine[c.origine] || 0) + 1;
   const dettaglio = Object.entries(perOrigine).map(([o, k]) => `${k} da ${o}`).join(', ');
   const quota = Math.round((n / d.totale) * 100);
 
-  pannello.style.setProperty('--c', colore);
+  pannello.style.setProperty('--c', d.colore);
   document.getElementById('p-domanda').textContent = d.titolo;
   document.getElementById('p-tema').textContent = tema.nome;
-  document.getElementById('p-conteggio').textContent = `${plurale(n)} su ${d.totale} (${quota}%) · ${dettaglio}`;
+  document.getElementById('p-conteggio').textContent = [
+    n ? `${plurale(n)} su ${d.totale} (${quota}%) · ${dettaglio}` : 'Nessun contributo lo ha come tema principale',
+    m ? `citato in altri ${m}` : null,
+  ].filter(Boolean).join(' · ');
+
   const lista = document.getElementById('p-lista');
-  lista.replaceChildren(...tema.contributi.map(c => scheda(c, colore)));
-  tornaA = origine;
-  pannello.showModal();
+  const gruppo = (titolo, contributi) => contributi.length ? [
+    titolo ? el('h3', { class: 'p-gruppo' }, titolo) : null,
+    ...contributi.map(c => scheda(c, d, { temaCorrente: tema.nome })),
+  ] : [];
+  lista.replaceChildren(...[
+    ...gruppo(m && n ? `Tema principale · ${n}` : null, tema.principali),
+    ...gruppo(`Citato come altro tema · ${m}`, tema.citazioni),
+  ].filter(Boolean));
+
+  // Aprendo un tema da un tag il pannello è già aperto: si aggiorna soltanto.
+  if (origine) tornaA = origine;
+  if (!pannello.open) pannello.showModal();
   lista.scrollTop = 0;
   lista.focus();
 }
@@ -144,23 +173,36 @@ document.getElementById('intro').textContent =
   'raggruppati per domanda e per tema. Ogni riquadro è un tema: più è grande, più contributi contiene.';
 const giorno = new Date(dati.aggiornato + 'T12:00:00').toLocaleDateString('it-IT', { day: 'numeric', month: 'long', year: 'numeric' });
 document.getElementById('nota-metodo').textContent =
-  'I temi sono stati assegnati a mano da LAMA Impresa Sociale, in una sola passata: ogni contributo è contato una volta, nel suo tema principale. ' +
-  'I tag sotto alcuni contributi indicano altri temi o dettagli che toccano. Non compaiono i contributi rimossi dalla regia. ' +
+  'I temi sono stati assegnati a mano da LAMA Impresa Sociale: ogni contributo ha un tema principale e, quando ne tocca altri, uno o più altri temi. ' +
+  'Sotto ogni contributo, i tag sottolineati sono gli altri temi e aprono i contributi che ne parlano; quelli con il contorno sono dettagli. Non compaiono i contributi rimossi dalla regia. ' +
   `I testi sono riportati come sono stati scritti. Dati aggiornati al ${giorno}.`;
 
 const indice = document.getElementById('indice');
 const contenitore = document.getElementById('domande');
 const mappe = [];
 
+// Vista delle mappe: 'principale' (ogni contributo conta una volta) o 'menzioni' (conta anche gli altri temi).
+let vista = 'principale';
+const SPIEGA = {
+  principale: 'Ogni contributo è contato una volta, nel suo tema principale.',
+  menzioni: 'Ogni contributo è contato in tutti i temi che tocca: le quote sommate superano il 100%.',
+};
+
 for (const d of dati.domande) {
   const conf = perTitolo.get(d.titolo) || {};
-  const colore = conf.colore || config.colori.bosco;
+  d.colore = conf.colore || config.colori.bosco;
   const id = 'd-' + (conf.id || d.titolo.toLowerCase().replace(/[^a-z0-9]+/g, '-'));
-  d.totale = d.temi.reduce((a, t) => a + t.contributi.length, 0);
+  d.totale = d.contributi.length;
+  d.perNome = new Map(d.temi.map(t => [t.nome, t]));
+  for (const t of d.temi) { t.principali = []; t.citazioni = []; }
+  for (const c of d.contributi) {
+    d.perNome.get(c.tema).principali.push(c);
+    for (const altro of c.altri || []) d.perNome.get(altro).citazioni.push(c);
+  }
 
   indice.append(el('a', { href: '#' + id }, conf.breve || d.titolo, el('span', { class: 'n' }, d.totale)));
 
-  const sezione = el('section', { class: 'domanda', id, '--c': colore },
+  const sezione = el('section', { class: 'domanda', id, '--c': d.colore },
     el('header', { class: 'd-testa' },
       el('span', { class: 'etichetta' }, d.titolo),
       el('h2', {}, conf.domanda || d.titolo),
@@ -169,19 +211,31 @@ for (const d of dati.domande) {
   );
 
   if (conf.relatori) {
-    // Poche domande, quasi tutte su temi diversi: un elenco dice più di una mappa.
-    sezione.append(el('div', { class: 'elenco' },
-      d.temi.flatMap(t => t.contributi.map(c => scheda(c, colore, t.nome)))));
+    // Domande quasi tutte su temi diversi: un elenco dice più di una mappa.
+    sezione.append(el('div', { class: 'elenco' }, d.contributi.map(c => scheda(c, d, { cliccabili: false }))));
   } else {
     const mappa = el('div', { class: 'mappa' });
     const piccoli = el('div', { class: 'piccoli', hidden: true });
-    sezione.append(
-      el('p', { class: 'nota d-aiuto' }, `${d.temi.length} temi. Scegli un riquadro per leggere i contributi.`),
-      mappa, piccoli);
-    mappe.push(() => disegnaMappa(mappa, piccoli, d, colore));
+    const aiuto = el('p', { class: 'nota d-aiuto' });
+    sezione.append(aiuto, mappa, piccoli);
+    mappe.push(() => {
+      const n = d.temi.filter(t => vista === 'menzioni' ? t.principali.length + t.citazioni.length : t.principali.length).length;
+      aiuto.textContent = `${n} temi. ${SPIEGA[vista]} Scegli un riquadro per leggere i contributi.`;
+      disegnaMappa(mappa, piccoli, d, d.colore);
+    });
   }
   contenitore.append(sezione);
 }
+
+// Selettore della vista, in testa alla pagina
+const selettore = document.getElementById('vista');
+const pulsantiVista = Object.entries({ principale: 'Tema principale', menzioni: 'Tutte le menzioni' }).map(([valore, testo]) =>
+  el('button', { type: 'button', dataset: { vista: valore }, onclick: () => { vista = valore; aggiornaVista(); disegnaTutte(); } }, testo));
+selettore.append(el('span', { class: 'v-etichetta' }, 'Conta i contributi per'), ...pulsantiVista);
+function aggiornaVista() {
+  for (const p of pulsantiVista) p.setAttribute('aria-pressed', String(p.dataset.vista === vista));
+}
+aggiornaVista();
 
 // Le mappe si ridisegnano quando cambia la larghezza della pagina.
 let larghezzaNota = 0;
