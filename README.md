@@ -12,7 +12,7 @@ Pilota: **Stati Generali di Vallombrosa**, sabato 28 novembre 2026, Reggello.
 | `index.html` | pubblico, da telefono | benvenuto con nome facoltativo, scelta della domanda, scrittura (400 caratteri), conferma. Il pubblico non vede la bacheca: la mostra la regia sul proiettore |
 | `regia.html` | regia, da computer | modifica dei testi delle domande dal vivo, rimozione e ripristino, temi (crea, rinomina, unisci, elimina, assegna anche a più contributi insieme), in evidenza, inserimento dei post-it, domande ai relatori con "fatta", comandi dello schermo, esportazione CSV |
 | `schermo.html` | proiettore | quattro modalità scelte dalla regia: accoglienza con QR grande, bacheca con tutti i contributi dal più recente (anche di una sola domanda), totale e contributi in evidenza, temi di una domanda con i conteggi |
-| `risultati.html` | chiunque, dopo l'evento | fotografia statica dei contributi codificati: una mappa ad aree per domanda, un riquadro per tema grande in proporzione ai contributi; un clic apre i testi. Senza nomi |
+| `risultati.html` | chiunque, dopo l'evento | fotografia statica dei contributi codificati: introduzione sul metodo, una mappa ad aree per domanda, un riquadro per tema grande in proporzione ai contributi che lo toccano; un clic apre i testi. Senza nomi |
 
 **Modalità demo.** Finché in `config.js` manca la configurazione Firebase, tutte le pagine funzionano con dati finti salvati nel browser.
 Con Firebase configurato, la demo resta disponibile aggiungendo `?demo` all'indirizzo (per esempio `regia.html?demo`).
@@ -66,15 +66,16 @@ I contributi di prova restano in `eventi/prova` e non compaiono nell'evento vero
 
 ## Dopo l'evento: la pagina dei risultati
 
-`risultati.html` non legge Firestore: mostra il contenuto di `js/dati-risultati.js`, generato dall'Excel dei contributi codificati (foglio «Contributi», con le colonne domanda, testo, tema, rimosso, origine, altri temi, dettaglio).
-«altri temi» usa gli stessi nomi della colonna «tema», separati da punto e virgola: la pagina li mostra come tag cliccabili e li conta nella vista *Tutte le menzioni*. «dettaglio» contiene note libere, mostrate come tag non cliccabili.
+`risultati.html` non legge Firestore: mostra il contenuto di `js/dati-risultati.js`, generato dall'Excel dei contributi codificati (foglio «Contributi», con le colonne id, data e ora, domanda, testo, tema, rimosso, origine, altri temi).
 
 ```bash
 python3 strumenti/excel-in-risultati.py contributi-codificati.xlsx
 ```
 
-Lo script scarta i contributi rimossi e quelli senza tema, e non copia nomi, orari né risposte sulla partecipazione: il file prodotto è pubblico. L'Excel invece contiene i nomi e non va caricato nel repository.
-I temi «Altro» e «Nessuna indicazione» compaiono come riquadri grigi. Le domande ai relatori sono mostrate come elenco.
+- Ogni riquadro conta i contributi che toccano quel tema, come tema principale o nella colonna «altri temi» (stessi nomi, separati da punto e virgola): le quote di una domanda sommate superano il 100%.
+- Sotto ogni contributo, gli altri temi sono collegamenti ai contributi di quel tema.
+- I temi «Altro» e «Nessuna indicazione» compaiono come riquadri grigi. Le domande ai relatori sono mostrate come elenco.
+- Lo script scarta i contributi rimossi (prove, doppioni) e quelli senza tema. Nel file pubblico finiscono solo testi e temi, più i numeri della raccolta usati nell'introduzione: niente nomi, orari, origine del singolo contributo, colonna «dettaglio». L'Excel invece contiene i nomi e non va caricato nel repository.
 
 ## Sicurezza: cosa protegge e cosa no
 
@@ -92,7 +93,7 @@ config.js            configurazione dell'evento (l'unico file da modificare)
 index.html           pubblico          js/partecipante.js   css/partecipante.css
 regia.html           regia             js/regia.js          css/regia.css
 schermo.html         proiettore        js/schermo.js        css/schermo.css
-risultati.html       risultati         js/risultati.js      css/risultati.css   (dati: js/dati-risultati.js)
+risultati.html       risultati         js/risultati.js      css/risultati.css   (dati: js/dati-risultati.js, logo: img/)
 css/base.css         stile comune ricavato dalla presentazione ARCO–LAMA
 js/comune.js         utilità comuni
 js/avvio.js          controllo di avvio: se dopo un aggiornamento il browser mescola file vecchi e nuovi, ricarica da solo

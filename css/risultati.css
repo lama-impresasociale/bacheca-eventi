@@ -6,18 +6,18 @@ body { padding: 0 20px; }
 .testata { padding: 48px 0 8px; }
 .testata h1 { font-size: clamp(28px, 4.2vw, 44px); font-weight: var(--forte); line-height: 1.1; }
 .sotto { margin-top: 10px; color: var(--testo-2); }
-.intro { margin-top: 22px; max-width: 42em; }
+.intro { margin-top: 22px; max-width: 42em; font-size: 19px; }
 
-.indice { display: flex; flex-wrap: wrap; gap: 6px 22px; margin-top: 26px; padding-top: 14px; border-top: 1px solid var(--linea); font-size: 15px; }
+/* Metodo: tre colonne brevi, testo piccolo, nessun riquadro */
+.metodo { margin-top: 34px; }
+.metodo-griglia { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px 36px; margin-top: 14px; }
+.metodo h3 { font-size: 15px; font-weight: var(--forte); padding-top: 10px; border-top: 2px solid var(--lime); }
+.metodo p { margin-top: 6px; font-size: 15px; line-height: 1.5; color: var(--testo-2); }
+
+.indice { display: flex; flex-wrap: wrap; gap: 6px 22px; margin-top: 36px; padding-top: 14px; border-top: 1px solid var(--linea); font-size: 15px; }
 .indice a { display: inline-flex; align-items: baseline; gap: 7px; min-height: 32px; text-decoration: none; }
 .indice a:hover { text-decoration: underline; }
 .indice .n { color: var(--testo-2); font-variant-numeric: tabular-nums; font-size: 13px; }
-
-/* Selettore della vista: due voci di testo, quella attiva sottolineata in lime */
-.vista { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 20px; margin-top: 14px; font-size: 15px; }
-.v-etichetta { color: var(--testo-2); }
-.vista button { min-height: 36px; padding: 0 0 2px; border: 0; border-bottom: 3px solid transparent; background: none; color: var(--testo-2); cursor: pointer; }
-.vista button[aria-pressed="true"] { border-bottom-color: var(--lime); color: var(--bosco); font-weight: var(--medio); }
 
 /* Una domanda */
 .domanda { padding: 56px 0 8px; scroll-margin-top: 8px; }
@@ -70,8 +70,10 @@ body { padding: 0 20px; }
 /* Domande ai relatori: solo elenco */
 .elenco { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr)); gap: 26px 40px; margin-top: 26px; }
 
-.piede { padding: 64px 0 48px; }
-.piede .nota { max-width: 46em; padding-top: 14px; border-top: 1px solid var(--linea); }
+.piede { display: flex; align-items: flex-end; justify-content: space-between; gap: 18px 32px; flex-wrap: wrap; margin-top: 72px; padding: 22px 0 48px; border-top: 1px solid var(--linea); }
+.logo { display: block; line-height: 0; }
+.logo img { width: 132px; height: auto; }
+.piede .nota { text-align: right; }
 
 /* Pannello dei contributi: laterale su computer, a tutto schermo su telefono */
 .pannello {
@@ -103,17 +105,11 @@ body { padding: 0 20px; }
 .p-piede { display: none; }
 
 .scheda-testo { font-size: 16px; }
-.scheda-piede { gap: 6px 8px; margin-top: 8px; }
-.scheda-piede > span:first-child { margin-right: 4px; }
-/* Tag dei temi: cliccabili, sottolineati in lime. Il tema principale è più marcato. */
+.scheda-piede { gap: 6px 14px; margin-top: 8px; }
+/* Altri temi toccati dal contributo: cliccabili, sottolineati in lime. */
 button.tag-tema { padding: 0; border: 0; border-bottom: 1px solid var(--lime); background: none; font: inherit; font-size: 13px; font-weight: var(--medio); color: var(--bosco); cursor: pointer; line-height: 1.5; }
 button.tag-tema:hover { border-bottom-width: 2px; margin-bottom: -1px; }
-.tag-tema.principale { font-weight: var(--pieno); }
-.tag-tema { margin-right: 6px; line-height: 1.5; }
-.p-gruppo { margin: 6px 0 -6px; font-size: 12px; font-weight: var(--pieno); letter-spacing: 0.08em; text-transform: uppercase; color: var(--testo-2); }
-.p-gruppo:not(:first-child) { margin-top: 18px; padding-top: 20px; border-top: 1px solid var(--linea); }
-/* Tag dei dettagli: contorno sottile, senza riempimento, non cliccabili. */
-.tag-altro { padding: 1px 8px; border: 1px solid var(--linea); border-radius: 3px; font-weight: var(--normale); color: var(--testo-2); line-height: 1.5; }
+.tema-relatori { font-size: 13px; color: var(--testo-2); }
 
 @media (max-width: 640px) {
   body { padding: 0 16px; }
@@ -122,6 +118,10 @@ button.tag-tema:hover { border-bottom-width: 2px; margin-bottom: -1px; }
   .d-testa { grid-template-columns: 1fr; }
   .d-numero { grid-column: 1; grid-row: auto; text-align: left; margin-top: 8px; }
   .d-numero b { display: inline; font-size: 30px; margin-right: 6px; }
+  .intro { font-size: 17px; }
+  .metodo-griglia { grid-template-columns: 1fr; gap: 14px; }
+  .piede { flex-direction: column; align-items: flex-start; }
+  .piede .nota { text-align: left; }
   .tema { padding: 9px 10px; }
 
   .pannello { width: 100%; border-left: 0; border-top: 6px solid var(--c, var(--bosco)); }
@@ -135,6 +135,6 @@ button.tag-tema:hover { border-bottom-width: 2px; margin-bottom: -1px; }
 }
 
 @media print {
-  .indice, .d-aiuto, .pannello { display: none; }
+  .indice, .d-aiuto, .pannello, .piccoli { display: none; }
   .domanda { break-inside: avoid; }
 }
